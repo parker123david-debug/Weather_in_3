@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Тактичний Метео-Монітор · 3 НП</title>
+<title>Тактичний Метео-Монітор · MGRS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -19,10 +19,10 @@
     --tactical-bg: #141b17;
     
     /* Кольори погоди */
-    --badge-clear: #d97706;   /* Ясно - Жовтий */
-    --badge-cloudy: #6b7280;  /* Хмарно - Сірий */
-    --badge-rain: #4a6572;    /* Дощ - Сіроблакитний */
-    --badge-thunder: #0284c7; /* Гроза - Блакитний */
+    --badge-clear: #d97706;
+    --badge-cloudy: #6b7280;
+    --badge-rain: #4a6572;
+    --badge-thunder: #0284c7;
 
     /* Статуси допуску */
     --ok: #2eb85c;
@@ -114,39 +114,55 @@
     gap: 10px;
   }
 
-  .np-header { display: flex; flex-direction: column; gap: 4px; }
-  .np-title { font-family: var(--display); font-size: 22px; font-weight: 700; margin: 0; }
-  .np-meta { font-size: 11px; color: var(--ink-soft); }
-  .np-coords { font-family: var(--mono); color: var(--ink-faint); }
+  .np-header { display: flex; flex-direction: column; gap: 6px; }
 
-  .search-row { display: flex; gap: 6px; margin-top: 2px; }
+  /* Порядок у шапці: 1 - пошук, 2 - назва, 3 - мети/координати/MGRS */
+  .search-row { display: flex; gap: 6px; }
   .search-row input {
     flex: 1;
     background: var(--card-bg);
     border: 1px solid var(--line);
     color: var(--ink);
-    padding: 5px 8px;
+    padding: 6px 9px;
     border-radius: 6px;
     font-family: var(--mono);
     font-size: 11px;
     outline: none;
   }
 
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--tactical-bg);
-    padding: 5px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    color: var(--ink-soft);
+  .np-title { font-family: var(--display); font-size: 22px; font-weight: 700; margin: 2px 0 0 0; }
+  
+  .np-meta { 
+    font-size: 11px; 
+    color: var(--ink-soft); 
+    display: flex; 
+    flex-wrap: wrap; 
+    align-items: center; 
+    gap: 6px; 
+  }
+  .np-coords { font-family: var(--mono); color: var(--ink-soft); }
+  
+  /* MGRS Стиль */
+  .mgrs-tag {
     font-family: var(--mono);
+    font-weight: 700;
+    font-size: 11px;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    letter-spacing: 0.03em;
+  }
+  [data-theme="light"] .mgrs-tag {
+    color: #0284c7;
+    background: rgba(2, 132, 199, 0.1);
+    border-color: rgba(2, 132, 199, 0.3);
   }
 
   .days-list { display: flex; flex-direction: column; gap: 10px; }
 
-  /* ДВОКОЛОНКОВА КАРТКА ПРОГНОЗУ */
+  /* КАРТКА ПРОГНОЗУ */
   .card {
     background: var(--card-bg);
     border: 1px solid var(--line);
@@ -181,17 +197,11 @@
     justify-content: space-between;
   }
 
-  /* Заголовок картки */
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .card-top { display: flex; justify-content: space-between; align-items: center; }
   .day-group { display: flex; align-items: baseline; gap: 6px; }
   .wday { font-family: var(--display); font-weight: 700; font-size: 16px; }
   .date-str { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
 
-  /* Плашки погоди (ЯСНО, ХМАРНО, ДОЩ, ГРОЗА) */
   .badge {
     font-size: 10px;
     font-weight: 700;
@@ -206,12 +216,7 @@
   .badge-rain { background: var(--badge-rain); }
   .badge-thunder { background: var(--badge-thunder); }
 
-  .card-main-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
+  .card-main-info { display: flex; align-items: center; justify-content: space-between; }
   .temp-box { display: flex; align-items: baseline; gap: 6px; }
   .t-max { font-family: var(--display); font-weight: 700; font-size: 26px; }
   .t-min { font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink-soft); }
@@ -221,7 +226,6 @@
   .m-row .lbl { color: var(--ink-soft); }
   .m-row .val { font-family: var(--mono); font-weight: 500; }
 
-  /* ТАКТИЧНІ БЛОКИ (СПРАВА) */
   .tactical-box {
     background: var(--tactical-bg);
     border: 1px solid var(--line);
@@ -232,18 +236,8 @@
     gap: 4px;
     flex: 1;
   }
-  .tac-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .tac-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-  }
+  .tac-head { display: flex; justify-content: space-between; align-items: center; }
+  .tac-title { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--ink-soft); }
 
   .status-badge {
     font-family: var(--mono);
@@ -260,7 +254,6 @@
 
   .tac-list { margin: 0; padding-left: 14px; font-size: 11.5px; line-height: 1.3; color: var(--ink); }
 
-  /* ІКОНКИ ПОГОДИ */
   .weather-icon { width: 32px; height: 32px; display: inline-block; }
   
   @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -282,7 +275,7 @@
 <div class="app-container">
 
   <header class="top-bar">
-    <p class="top-title">Тактичний Метео-Монітор · 1 | 2 | 3</p>
+    <p class="top-title">Тактичний Метео-Монітор · 1 | 2 | 3 (MGRS)</p>
     <div style="display:flex; gap:8px;">
       <button class="btn" onclick="loadAllNP()">🔄 Оновити всі 3 НП</button>
       <button class="btn" onclick="toggleTheme()">🌓 Тема</button>
@@ -294,17 +287,20 @@
     <!-- НП 1 -->
     <div class="np-column">
       <div class="np-header">
-        <h2 class="np-title" id="title-0">1. Степногірськ</h2>
-        <div class="np-meta"><span id="meta-0">Василівський р-н · </span><span class="np-coords" id="coords-0">47.5865°пн 35.3580°сх</span></div>
+        <!-- 1. Порядок: Рядок введення/пошуку -->
         <div class="search-row">
-          <input type="text" id="input-0" placeholder="Назва або 47.5865, 35.3580">
+          <input type="text" id="input-0" placeholder="Назва, Lat/Lon або MGRS (напр. 36TX...)" onkeydown="if(event.key==='Enter') updateNP(0)">
           <button class="btn btn-main" onclick="updateNP(0)">Ок</button>
           <button class="btn" onclick="getGPS(0)">📍 GPS</button>
         </div>
-      </div>
-      <div class="status-bar">
-        <span>Статус: <b id="status-0">Очікування...</b></span>
-        <button class="btn" style="padding:1px 6px; font-size:10px;" onclick="loadNP(0)">Оновити</button>
+        <!-- 2. Порядок: Назва НП -->
+        <h2 class="np-title" id="title-0">1. Степногірськ</h2>
+        <!-- 3. Порядок: Область/район, WGS84 та MGRS -->
+        <div class="np-meta">
+          <span id="meta-0">Василівський р-н</span> · 
+          <span class="np-coords" id="coords-0">47.5865°пн 35.3580°сх</span> · 
+          <span class="mgrs-tag" id="mgrs-0">36T XT 7696 6950</span>
+        </div>
       </div>
       <div class="days-list" id="grid-0">
         <div class="loading-msg">Завантаження...</div>
@@ -314,17 +310,20 @@
     <!-- НП 2 -->
     <div class="np-column">
       <div class="np-header">
-        <h2 class="np-title" id="title-1">2. Оріхів</h2>
-        <div class="np-meta"><span id="meta-1">Пологівський р-н · </span><span class="np-coords" id="coords-1">47.5683°пн 35.7833°сх</span></div>
+        <!-- 1 -->
         <div class="search-row">
-          <input type="text" id="input-1" placeholder="Назва або 47.5683, 35.7833">
+          <input type="text" id="input-1" placeholder="Назва, Lat/Lon або MGRS (напр. 36TX...)" onkeydown="if(event.key==='Enter') updateNP(1)">
           <button class="btn btn-main" onclick="updateNP(1)">Ок</button>
           <button class="btn" onclick="getGPS(1)">📍 GPS</button>
         </div>
-      </div>
-      <div class="status-bar">
-        <span>Статус: <b id="status-1">Очікування...</b></span>
-        <button class="btn" style="padding:1px 6px; font-size:10px;" onclick="loadNP(1)">Оновити</button>
+        <!-- 2 -->
+        <h2 class="np-title" id="title-1">2. Оріхів</h2>
+        <!-- 3 -->
+        <div class="np-meta">
+          <span id="meta-1">Пологівський р-н</span> · 
+          <span class="np-coords" id="coords-1">47.5683°пн 35.7833°сх</span> · 
+          <span class="mgrs-tag" id="mgrs-1">36T YT 0895 6770</span>
+        </div>
       </div>
       <div class="days-list" id="grid-1">
         <div class="loading-msg">Завантаження...</div>
@@ -334,17 +333,20 @@
     <!-- НП 3 -->
     <div class="np-column">
       <div class="np-header">
-        <h2 class="np-title" id="title-2">3. Гуляйполе</h2>
-        <div class="np-meta"><span id="meta-2">Пологівський р-н · </span><span class="np-coords" id="coords-2">47.6583°пн 36.2583°сх</span></div>
+        <!-- 1 -->
         <div class="search-row">
-          <input type="text" id="input-2" placeholder="Назва або 47.6583, 36.2583">
+          <input type="text" id="input-2" placeholder="Назва, Lat/Lon або MGRS (напр. 36TX...)" onkeydown="if(event.key==='Enter') updateNP(2)">
           <button class="btn btn-main" onclick="updateNP(2)">Ок</button>
           <button class="btn" onclick="getGPS(2)">📍 GPS</button>
         </div>
-      </div>
-      <div class="status-bar">
-        <span>Статус: <b id="status-2">Очікування...</b></span>
-        <button class="btn" style="padding:1px 6px; font-size:10px;" onclick="loadNP(2)">Оновити</button>
+        <!-- 2 -->
+        <h2 class="np-title" id="title-2">3. Гуляйполе</h2>
+        <!-- 3 -->
+        <div class="np-meta">
+          <span id="meta-2">Пологівський р-н</span> · 
+          <span class="np-coords" id="coords-2">47.6583°пн 36.2583°сх</span> · 
+          <span class="mgrs-tag" id="mgrs-2">36T YT 4438 7808</span>
+        </div>
       </div>
       <div class="days-list" id="grid-2">
         <div class="loading-msg">Завантаження...</div>
@@ -376,7 +378,176 @@ function degToArrow(deg) {
   return dirs[Math.round(((deg + 180) % 360) / 45) % 8];
 }
 
-// Пошук назви НП за координатами (Reverse Geocoding)
+/* ==================== MGRS (NATO COORD) CONVERTER ==================== */
+function latLonToMGRS(lat, lon, digits = 4) {
+  if (isNaN(lat) || isNaN(lon)) return "";
+
+  const a = 6378137.0;
+  const f = 1 / 298.257223563;
+  const k0 = 0.9996;
+  const e2 = 2 * f - f * f;
+  const e2prime = e2 / (1 - e2);
+
+  const radLat = lat * Math.PI / 180;
+  const radLon = lon * Math.PI / 180;
+
+  let zoneNum = Math.floor((lon + 180) / 6) + 1;
+  if (lat >= 56.0 && lat < 64.0 && lon >= 3.0 && lon < 12.0) zoneNum = 32;
+
+  const lon0 = ((zoneNum - 1) * 6 - 180 + 3) * Math.PI / 180;
+
+  const N = a / Math.sqrt(1 - e2 * Math.sin(radLat) * Math.sin(radLat));
+  const T = Math.tan(radLat) * Math.tan(radLat);
+  const C = e2prime * Math.cos(radLat) * Math.cos(radLat);
+  const A = Math.cos(radLat) * (radLon - lon0);
+
+  const M = a * (
+    (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256) * radLat -
+    (3*e2/8 + 3*e2*e2/32 + 45*e2*e2*e2/1024) * Math.sin(2*radLat) +
+    (15*e2*e2/256 + 45*e2*e2*e2/1024) * Math.sin(4*radLat) -
+    (35*e2*e2*e2/3072) * Math.sin(6*radLat)
+  );
+
+  let easting = k0 * N * (
+    A +
+    (1 - T + C) * A*A*A / 6 +
+    (5 - 18*T + T*T + 72*C - 58*e2prime) * A*A*A*A*A / 120
+  ) + 500000.0;
+
+  let northing = k0 * (
+    M + N * Math.tan(radLat) * (
+      A*A / 2 +
+      (5 - T + 9*C + 4*C*C) * A*A*A*A / 24 +
+      (61 - 58*T + T*T + 600*C - 330*e2prime) * A*A*A*A*A*A / 720
+    )
+  );
+
+  if (lat < 0) northing += 10000000.0;
+
+  const bands = "CDEFGHJKLMNPQRSTUVWXX";
+  let bandIdx = Math.floor((lat + 80) / 8);
+  if (bandIdx < 0) bandIdx = 0;
+  if (bandIdx > 19) bandIdx = 19;
+  const latBand = bands[bandIdx];
+
+  const colSets = [
+    ['A','B','C','D','E','F','G','H'],
+    ['J','K','L','M','N','P','Q','R'],
+    ['S','T','U','V','W','X','Y','Z']
+  ];
+  const rowArray = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V'];
+
+  const setIdx = (zoneNum - 1) % 3;
+  const colIdx = Math.floor(easting / 100000) - 1;
+  const colChar = colSets[setIdx][colIdx] || '?';
+
+  let rowVal = Math.floor((northing % 2000000) / 100000);
+  if (zoneNum % 2 === 0) rowVal = (rowVal + 5) % 20;
+  const rowChar = rowArray[rowVal] || '?';
+
+  const e100k = Math.floor(easting % 100000);
+  const n100k = Math.floor(northing % 100000);
+
+  const eStr = String(e100k).padStart(5, '0').substring(0, digits);
+  const nStr = String(n100k).padStart(5, '0').substring(0, digits);
+
+  return `${zoneNum}${latBand} ${colChar}${rowChar} ${eStr} ${nStr}`;
+}
+
+function mgrsToLatLon(mgrsStr) {
+  const clean = mgrsStr.replace(/\s+/g, '').toUpperCase();
+  const match = clean.match(/^(\d{1,2})([C-HJ-NP-X])([A-HJ-NP-Z])([A-HJ-NP-V])(\d+)$/);
+  if (!match) return null;
+
+  const zoneNum = parseInt(match[1], 10);
+  const latBand = match[2];
+  const colChar = match[3];
+  const rowChar = match[4];
+  const digits = match[5];
+
+  if (digits.length % 2 !== 0) return null;
+  const halfLen = digits.length / 2;
+  let e100k = parseInt(digits.substring(0, halfLen), 10);
+  let n100k = parseInt(digits.substring(halfLen), 10);
+
+  const scale = Math.pow(10, 5 - halfLen);
+  e100k = e100k * scale + (scale / 2);
+  n100k = n100k * scale + (scale / 2);
+
+  const colSets = [
+    ['A','B','C','D','E','F','G','H'],
+    ['J','K','L','M','N','P','Q','R'],
+    ['S','T','U','V','W','X','Y','Z']
+  ];
+  const setIdx = (zoneNum - 1) % 3;
+  const colIdx = colSets[setIdx].indexOf(colChar);
+  if (colIdx === -1) return null;
+  const easting = (colIdx + 1) * 100000 + e100k;
+
+  const rowArray = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V'];
+  let rowIdx = rowArray.indexOf(rowChar);
+  if (rowIdx === -1) return null;
+
+  if (zoneNum % 2 === 0) rowIdx = (rowIdx - 5 + 20) % 20;
+
+  const bands = "CDEFGHJKLMNPQRSTUVWXX";
+  const bandIdx = bands.indexOf(latBand);
+  const approxLat = (bandIdx * 8) - 80 + 4;
+
+  const approxNorthing = (approxLat / 90.0) * 10000000;
+  const minNorthing = Math.max(0, approxNorthing - 1000000);
+
+  let northing = Math.floor(minNorthing / 2000000) * 2000000 + rowIdx * 100000 + n100k;
+  while (northing < minNorthing) northing += 2000000;
+
+  return utmToLatLon(easting, northing, zoneNum, latBand >= 'N');
+}
+
+function utmToLatLon(easting, northing, zoneNum, northernHemi) {
+  const k0 = 0.9996;
+  const a = 6378137.0;
+  const f = 1 / 298.257223563;
+  const e2 = 2 * f - f * f;
+  const e2prime = e2 / (1 - e2);
+
+  let x = easting - 500000.0;
+  let y = northing;
+  if (!northernHemi) y -= 10000000.0;
+
+  const lon0 = ((zoneNum - 1) * 6 - 180 + 3) * Math.PI / 180;
+  const M = y / k0;
+  const mu = M / (a * (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256));
+
+  const e1 = (1 - Math.sqrt(1 - e2)) / (1 + Math.sqrt(1 - e2));
+
+  const phi1 = mu +
+    (3*e1/2 - 27*e1*e1*e1/32) * Math.sin(2*mu) +
+    (21*e1*e1/16 - 55*e1*e1*e1*e1/32) * Math.sin(4*mu) +
+    (151*e1*e1*e1/96) * Math.sin(6*mu) +
+    (1097*e1*e1*e1*e1/512) * Math.sin(8*mu);
+
+  const N1 = a / Math.sqrt(1 - e2 * Math.sin(phi1) * Math.sin(phi1));
+  const T1 = Math.tan(phi1) * Math.tan(phi1);
+  const C1 = e2prime * Math.cos(phi1) * Math.cos(phi1);
+  const R1 = a * (1 - e2) / Math.pow(1 - e2 * Math.sin(phi1) * Math.sin(phi1), 1.5);
+  const D = x / (N1 * k0);
+
+  let lat = phi1 - (N1 * Math.tan(phi1) / R1) * (
+    D*D/2 -
+    (5 + 3*T1 + 10*C1 - 4*C1*C1 - 9*e2prime) * D*D*D*D / 24 +
+    (61 + 90*T1 + 298*C1 + 45*T1*T1 - 252*e2prime - 3*C1*C1) * D*D*D*D*D*D / 720
+  );
+
+  let lon = lon0 + (
+    D -
+    (1 + 2*T1 + C1) * D*D*D / 6 +
+    (5 - 2*C1 + 28*T1 - 3*C1*C1 + 8*e2prime + 24*T1*T1) * D*D*D*D*D / 120
+  ) / Math.cos(phi1);
+
+  return { lat: lat * 180 / Math.PI, lon: lon * 180 / Math.PI };
+}
+
+/* ==================== GEOCODING & API ==================== */
 async function reverseGeocode(lat, lon) {
   try {
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=uk`);
@@ -402,7 +573,6 @@ async function reverseGeocode(lat, lon) {
   return { name: `НП (${lat.toFixed(2)}, ${lon.toFixed(2)})`, region: "" };
 }
 
-// Пошук координат за назвою НП (Forward Geocoding)
 async function forwardGeocode(query) {
   try {
     const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=uk&format=json`);
@@ -424,34 +594,30 @@ async function forwardGeocode(query) {
 
 function getWeatherIcon(type) {
   if (type === 'thunder') {
-    return `
-      <svg class="weather-icon" viewBox="0 0 40 40">
-        <path class="anim-cloud" fill="#607d8b" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/>
-        <polygon class="anim-bolt" fill="#f59e0b" points="19,20 14,28 18,28 16,36 24,25 20,25"/>
-      </svg>`;
+    return `<svg class="weather-icon" viewBox="0 0 40 40">
+      <path class="anim-cloud" fill="#607d8b" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/>
+      <polygon class="anim-bolt" fill="#f59e0b" points="19,20 14,28 18,28 16,36 24,25 20,25"/>
+    </svg>`;
   } else if (type === 'rain') {
-    return `
-      <svg class="weather-icon" viewBox="0 0 40 40">
-        <path class="anim-cloud" fill="#78909c" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/>
-        <line class="anim-drop-1" x1="16" y1="23" x2="14" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
-        <line class="anim-drop-2" x1="24" y1="23" x2="22" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
-      </svg>`;
+    return `<svg class="weather-icon" viewBox="0 0 40 40">
+      <path class="anim-cloud" fill="#78909c" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/>
+      <line class="anim-drop-1" x1="16" y1="23" x2="14" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+      <line class="anim-drop-2" x1="24" y1="23" x2="22" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+    </svg>`;
   } else if (type === 'cloudy') {
-    return `
-      <svg class="weather-icon" viewBox="0 0 40 40">
-        <path class="anim-cloud" fill="#90a4ae" d="M9,22 Q9,15 16,15 Q18,10 25,12 Q30,11 31,17 Q35,18 34,22 Z"/>
-      </svg>`;
+    return `<svg class="weather-icon" viewBox="0 0 40 40">
+      <path class="anim-cloud" fill="#90a4ae" d="M9,22 Q9,15 16,15 Q18,10 25,12 Q30,11 31,17 Q35,18 34,22 Z"/>
+    </svg>`;
   } else {
-    return `
-      <svg class="weather-icon" viewBox="0 0 40 40">
-        <g class="anim-sun-rays" stroke="#d97706" stroke-width="2">
-          <line x1="20" y1="4" x2="20" y2="8"/><line x1="20" y1="32" x2="20" y2="36"/>
-          <line x1="4" y1="20" x2="8" y2="20"/><line x1="32" y1="20" x2="36" y2="20"/>
-          <line x1="8.7" y1="8.7" x2="11.5" y2="11.5"/><line x1="28.5" y1="28.5" x2="31.3" y2="31.3"/>
-          <line x1="8.7" y1="31.3" x2="11.5" y2="28.5"/><line x1="28.5" y1="11.5" x2="31.3" y2="8.7"/>
-        </g>
-        <circle cx="20" cy="20" r="8" fill="#d97706"/>
-      </svg>`;
+    return `<svg class="weather-icon" viewBox="0 0 40 40">
+      <g class="anim-sun-rays" stroke="#d97706" stroke-width="2">
+        <line x1="20" y1="4" x2="20" y2="8"/><line x1="20" y1="32" x2="20" y2="36"/>
+        <line x1="4" y1="20" x2="8" y2="20"/><line x1="32" y1="20" x2="36" y2="20"/>
+        <line x1="8.7" y1="8.7" x2="11.5" y2="11.5"/><line x1="28.5" y1="28.5" x2="31.3" y2="31.3"/>
+        <line x1="8.7" y1="31.3" x2="11.5" y2="28.5"/><line x1="28.5" y1="11.5" x2="31.3" y2="8.7"/>
+      </g>
+      <circle cx="20" cy="20" r="8" fill="#d97706"/>
+    </svg>`;
   }
 }
 
@@ -527,8 +693,6 @@ function renderCards(data) {
       uavNote = `Пориви до ${maxGust} м/с — знесення апарата.`;
     }
 
-    const weatherIcon = getWeatherIcon(weatherType);
-
     return `
       <div class="card">
         <div class="card-left">
@@ -545,7 +709,7 @@ function renderCards(data) {
               <span class="t-max">${maxT}°</span>
               <span class="t-min">${minT}°</span>
             </div>
-            ${weatherIcon}
+            ${getWeatherIcon(weatherType)}
           </div>
 
           <div class="metrics-list">
@@ -589,20 +753,23 @@ function renderCards(data) {
   }).join('');
 }
 
+function updateHeaderInfo(idx) {
+  const loc = locations[idx];
+  document.getElementById(`coords-${idx}`).textContent = `${loc.lat.toFixed(4)}°пн ${loc.lon.toFixed(4)}°сх`;
+  document.getElementById(`mgrs-${idx}`).textContent = latLonToMGRS(loc.lat, loc.lon);
+}
+
 async function loadNP(idx) {
   const loc = locations[idx];
   const gridEl = document.getElementById(`grid-${idx}`);
-  const statusEl = document.getElementById(`status-${idx}`);
-
-  statusEl.textContent = "Оновлення...";
+  
+  updateHeaderInfo(idx);
   
   try {
     const raw = await fetchWeather(loc.lat, loc.lon);
     gridEl.innerHTML = renderCards(raw);
-    statusEl.textContent = `ОК (${new Date().toLocaleTimeString('uk-UA', {hour:'2-digit', minute:'2-digit'})})`;
   } catch (e) {
     gridEl.innerHTML = `<div class="loading-msg" style="color:var(--danger);">Помилка завантаження.</div>`;
-    statusEl.textContent = "Помилка";
   }
 }
 
@@ -610,69 +777,69 @@ async function updateNP(idx) {
   const val = document.getElementById(`input-${idx}`).value.trim();
   if (!val) return;
 
-  const statusEl = document.getElementById(`status-${idx}`);
-  statusEl.textContent = "Пошук...";
+  // 1. Спроба розпізнати як MGRS
+  const mgrsLoc = mgrsToLatLon(val);
+  if (mgrsLoc) {
+    locations[idx].lat = mgrsLoc.lat;
+    locations[idx].lon = mgrsLoc.lon;
 
-  const parts = val.split(/[\s,]+/);
-  let isCoords = false;
-  let lat, lon;
-
-  if (parts.length >= 2) {
-    lat = parseFloat(parts[0]);
-    lon = parseFloat(parts[1]);
-    if (!isNaN(lat) && !isNaN(lon)) {
-      isCoords = true;
-    }
-  }
-
-  if (isCoords) {
-    locations[idx].lat = lat;
-    locations[idx].lon = lon;
-    document.getElementById(`coords-${idx}`).textContent = `${lat.toFixed(4)}°пн ${lon.toFixed(4)}°сх`;
-
-    // Автоматичне визначення назви за координатами
-    const geo = await reverseGeocode(lat, lon);
+    const geo = await reverseGeocode(mgrsLoc.lat, mgrsLoc.lon);
     if (geo && geo.name) {
       locations[idx].name = geo.name;
       document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
-      document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region} · ` : '';
+      document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region}` : '';
     }
-  } else {
-    // Пошук за текстом (назва міста/села)
-    const geo = await forwardGeocode(val);
-    if (geo) {
-      locations[idx].lat = geo.lat;
-      locations[idx].lon = geo.lon;
-      locations[idx].name = geo.name;
-      document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
-      document.getElementById(`coords-${idx}`).textContent = `${geo.lat.toFixed(4)}°пн ${geo.lon.toFixed(4)}°сх`;
-      document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region} · ` : '';
-    } else {
-      alert("Населений пункт не знайдено");
-      statusEl.textContent = "Не знайдено";
-      return;
-    }
+    loadNP(idx);
+    return;
   }
 
-  loadNP(idx);
-}
-
-function getGPS(idx) {
-  if (navigator.geolocation) {
-    const statusEl = document.getElementById(`status-${idx}`);
-    statusEl.textContent = "Отримання GPS...";
-    navigator.geolocation.getCurrentPosition(async pos => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
+  // 2. Спроба розпізнати як Lat, Lon (десяткові)
+  const parts = val.split(/[\s,]+/);
+  if (parts.length >= 2) {
+    const lat = parseFloat(parts[0]);
+    const lon = parseFloat(parts[1]);
+    if (!isNaN(lat) && !isNaN(lon)) {
       locations[idx].lat = lat;
       locations[idx].lon = lon;
-      document.getElementById(`coords-${idx}`).textContent = `${lat.toFixed(4)}°пн ${lon.toFixed(4)}°сх`;
 
       const geo = await reverseGeocode(lat, lon);
       if (geo && geo.name) {
         locations[idx].name = geo.name;
         document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
-        document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region} · ` : '';
+        document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region}` : '';
+      }
+      loadNP(idx);
+      return;
+    }
+  }
+
+  // 3. Пошук за назвою НП
+  const geo = await forwardGeocode(val);
+  if (geo) {
+    locations[idx].lat = geo.lat;
+    locations[idx].lon = geo.lon;
+    locations[idx].name = geo.name;
+    document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
+    document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region}` : '';
+    loadNP(idx);
+  } else {
+    alert("Населений пункт або координати не знайдено.");
+  }
+}
+
+function getGPS(idx) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      locations[idx].lat = lat;
+      locations[idx].lon = lon;
+
+      const geo = await reverseGeocode(lat, lon);
+      if (geo && geo.name) {
+        locations[idx].name = geo.name;
+        document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
+        document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region}` : '';
       }
 
       loadNP(idx);
