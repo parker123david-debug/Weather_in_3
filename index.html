@@ -53,8 +53,7 @@
     transition: background 0.3s, color 0.3s;
   }
   
-  /* Збільшено ширину контейнера на 20% для більшої ширини карток */
-  .wrap { max-width: 1680px; margin: 0 auto; padding: 24px 20px 60px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
 
   header { padding-top: 4px; }
   .top-row {
@@ -72,7 +71,6 @@
     margin: 0;
   }
   
-  /* Кнопка перемикання теми */
   .theme-toggle {
     background: var(--panel);
     border: 1px solid var(--line);
@@ -192,29 +190,39 @@
   #state-error { display: none; border-color: var(--alert-soft); }
   #state-error b { display: block; color: var(--alert); font-size: 14.5px; margin-bottom: 6px; }
 
-  /* Сітка з 5 картками у рядок для десктопу */
+  /* Сітка карток у форматі 2 + 2 + 1 */
   #cards {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 960px;
+    margin: 0 auto;
   }
+
+  /* 5-та картка центрована у третьому рядку */
+  .card:nth-child(5) {
+    grid-column: 1 / -1;
+    width: calc(50% - 8px);
+    justify-self: center;
+  }
+
   .card {
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 16px 14px;
+    padding: 18px 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
   }
   .card .date-row { display: flex; align-items: baseline; justify-content: space-between; }
-  .card .weekday { font-family: var(--display); font-weight: 600; font-size: 15px; text-transform: capitalize; }
-  .card .daynum { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+  .card .weekday { font-family: var(--display); font-weight: 600; font-size: 16px; text-transform: capitalize; }
+  .card .daynum { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
 
   .icon-row { display: flex; align-items: center; gap: 8px; }
-  .wicon { width: 40px; height: 40px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .wtype { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
+  .wicon { width: 42px; height: 42px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .wtype { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
   .tag-clear { background: var(--sun); }
   .tag-mixed { background: #8a8f76; }
   .tag-cloud { background: var(--ink-soft); }
@@ -225,11 +233,11 @@
   .horizon-rule-sm { height: 1px; background: var(--line); }
 
   .temps { display: flex; align-items: baseline; gap: 6px; }
-  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 25px; }
-  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 16.5px; color: var(--ink-soft); }
-  .temps .deg { font-size: 12.5px; font-weight: 500; color: var(--ink-soft); }
+  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 28px; }
+  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 18px; color: var(--ink-soft); }
+  .temps .deg { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
 
-  .row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+  .row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
   .row .label { color: var(--ink-soft); display: flex; align-items: center; gap: 4px; }
   .row .value { font-family: var(--mono); font-weight: 500; text-align: right; }
   .arrow { font-size: 14px; display: inline-block; color: var(--wind); }
@@ -246,15 +254,15 @@
     background: var(--tactical-bg);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 8px 9px;
+    padding: 10px 12px;
     margin-top: 2px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
   .tactical-hdr {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -272,13 +280,13 @@
   [data-theme="dark"] .badge-warn { background: #3d3211; color: #f5d77f; }
   [data-theme="dark"] .badge-crit { background: #4a1d20; color: #f2a4a8; }
 
-  .tac-list { font-size: 11.5px; line-height: 1.35; color: var(--ink); margin: 0; padding-left: 12px; }
+  .tac-list { font-size: 12px; line-height: 1.4; color: var(--ink); margin: 0; padding-left: 14px; }
   .tac-list li { margin-bottom: 2px; }
   .tac-metric { font-family: var(--mono); font-weight: 600; }
 
   .approx { font-size: 10px; color: var(--ink-faint); margin-top: 1px; }
 
-  /* CSS Анімації погоди */
+  /* CSS Анімації */
   @keyframes spin-sun { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   @keyframes float-cloud { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
   @keyframes rain-fall { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -12; } }
@@ -291,31 +299,14 @@
   .anim-fog { animation: fog-drift 3s ease-in-out infinite; }
   .anim-flash { animation: storm-flash 1.2s ease-in-out infinite; }
 
-  /* Адаптація для планшетів */
-  @media (max-width: 1280px) {
-    #cards { grid-template-columns: repeat(3, 1fr); }
-  }
-
-  /* Мобільна адаптація */
-  @media (max-width: 720px) {
+  /* Адаптація для мобільних екранів */
+  @media (max-width: 768px) {
     .wrap { padding: 14px 12px 40px; }
-    header { text-align: left; }
-    h1 { font-size: 22px; }
-    .subcap { font-size: 12px; margin-bottom: 12px; }
-    .search-box { flex-direction: row; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-    .search-box input { min-width: 100%; padding: 8px 10px; font-size: 12px; }
-    .search-box button { flex: 1; padding: 8px 10px; font-size: 12px; justify-content: center; text-align: center; }
-    .status-bar { padding: 8px 12px; font-size: 11px; gap: 4px 12px; margin-bottom: 14px; }
+    h1 { font-size: 24px; }
+    #cards { grid-template-columns: 1fr; gap: 12px; }
+    .card:nth-child(5) { width: 100%; }
+    .status-bar { padding: 8px 12px; font-size: 11px; gap: 4px 12px; }
     #refresh-btn { margin-left: 0; width: 100%; margin-top: 4px; padding: 6px 0; }
-    #cards { grid-template-columns: 1fr; gap: 10px; }
-    .card { padding: 12px; gap: 8px; border-radius: 12px; }
-    .card .weekday { font-size: 14px; }
-    .temps .tmax { font-size: 23px; }
-    .temps .tmin { font-size: 15px; }
-    .row { font-size: 11.5px; }
-    .tactical-box { padding: 8px; gap: 4px; }
-    .tactical-hdr { font-size: 10px; }
-    .tac-list { font-size: 11px; padding-left: 12px; }
   }
 
   footer {
@@ -371,7 +362,6 @@
 </div>
 
 <script>
-// Перемикач теми
 function initTheme() {
   const savedTheme = localStorage.getItem('theme');
   if (savedTheme) {
@@ -470,7 +460,6 @@ function fmtTime(iso){
   return parts.length>1 ? parts[1] : null;
 }
 
-// Форматування дати у вигляд ДД.ММ.РРРР
 function formatDateHuman(dateStr){
   const [yyyy, mm, dd] = dateStr.split('-');
   const d = new Date(dateStr+'T00:00:00');
@@ -756,7 +745,6 @@ function renderDays(days){
   document.getElementById('cards').innerHTML = days.map(dayCardHTML).join('');
 }
 
-// Оновлення часу за стандартом НАТО: ЧЧ.ХХ ДД.ММ.РРРР (наприклад: 10.06 18.08.2026)
 function updateStatusBar(){
   if (!lastFetchTime) return;
   const hh = String(lastFetchTime.getHours()).padStart(2, '0');
