@@ -20,7 +20,7 @@
     --sun: #e59e38;
     --alert: #d9533f;
     --ok: #34a853;
-    --radius: 10px;
+    --radius: 12px;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --display: 'Space Grotesk', var(--sans);
     --mono: 'JetBrains Mono', monospace;
@@ -44,13 +44,15 @@
   body {
     margin: 0;
     font-family: var(--sans);
+    font-size: 15px;
     color: var(--ink);
     background: var(--bg);
     min-height: 100vh;
-    padding: 16px;
+    padding: 20px;
   }
 
-  .app-container { max-width: 1800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  /* Розширено контейнер для карт +30% */
+  .app-container { max-width: 2300px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 
   /* Шапка */
   .top-bar {
@@ -58,36 +60,36 @@
     justify-content: space-between;
     align-items: center;
     background: var(--panel-bg);
-    padding: 12px 18px;
+    padding: 16px 24px;
     border-radius: var(--radius);
     border: 1px solid var(--line);
   }
-  .top-title { font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin: 0; }
+  .top-title { font-family: var(--mono); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin: 0; }
   
   .btn {
     font-family: var(--sans);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
     background: var(--card-bg);
     color: var(--ink);
     border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 6px 12px;
+    border-radius: 8px;
+    padding: 8px 16px;
     cursor: pointer;
   }
   .btn:hover { opacity: 0.85; }
   .btn-main { background: var(--ink); color: var(--bg); border: none; }
 
-  /* ГОЛОВНА СІТКА: 3 НП ПОРУЧ (1, 2, 3) */
+  /* ГОЛОВНА СІТКА: 3 НП ПОРУЧ (Ширші картки) */
   .np-row-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 22px;
     align-items: start;
   }
 
-  @media (max-width: 1100px) {
-    .np-row-grid { grid-template-columns: 1fr; } /* Адаптив під вузькі екрани */
+  @media (max-width: 1200px) {
+    .np-row-grid { grid-template-columns: 1fr; }
   }
 
   /* Блок окремого НП */
@@ -95,27 +97,27 @@
     background: var(--panel-bg);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 14px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
   }
 
-  .np-header { display: flex; flex-direction: column; gap: 4px; }
-  .np-title { font-family: var(--display); font-size: 24px; font-weight: 700; margin: 0; }
-  .np-meta { font-size: 11px; color: var(--ink-soft); }
+  .np-header { display: flex; flex-direction: column; gap: 6px; }
+  .np-title { font-family: var(--display); font-size: 30px; font-weight: 700; margin: 0; }
+  .np-meta { font-size: 13px; color: var(--ink-soft); }
   .np-coords { font-family: var(--mono); color: var(--ink-faint); }
 
-  .search-row { display: flex; gap: 6px; margin-top: 4px; }
+  .search-row { display: flex; gap: 8px; margin-top: 6px; }
   .search-row input {
     flex: 1;
     background: var(--card-bg);
     border: 1px solid var(--line);
     color: var(--ink);
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
     outline: none;
   }
 
@@ -124,9 +126,9 @@
     justify-content: space-between;
     align-items: center;
     background: var(--tactical-bg);
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 11px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
     color: var(--ink-soft);
     font-family: var(--mono);
   }
@@ -135,67 +137,67 @@
   .days-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
   }
 
   .card {
     background: var(--card-bg);
     border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 10px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
 
   .card-top { display: flex; justify-content: space-between; align-items: baseline; }
-  .wday { font-family: var(--display); font-weight: 700; font-size: 15px; }
-  .date-str { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); }
+  .wday { font-family: var(--display); font-weight: 700; font-size: 19px; }
+  .date-str { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
 
   .badge {
     display: inline-block;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 3px 8px;
+    border-radius: 5px;
     background: var(--sun);
     color: #fff;
     text-transform: uppercase;
   }
 
-  .temp-row { display: flex; align-items: baseline; gap: 6px; }
-  .t-max { font-family: var(--display); font-weight: 700; font-size: 24px; }
-  .t-min { font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink-soft); }
+  .temp-row { display: flex; align-items: baseline; gap: 8px; }
+  .t-max { font-family: var(--display); font-weight: 700; font-size: 32px; }
+  .t-min { font-family: var(--display); font-weight: 500; font-size: 22px; color: var(--ink-soft); }
 
-  .data-row { display: flex; justify-content: space-between; font-size: 11px; }
+  .data-row { display: flex; justify-content: space-between; font-size: 14px; }
   .data-row .lbl { color: var(--ink-soft); }
-  .data-row .val { font-family: var(--mono); }
+  .data-row .val { font-family: var(--mono); font-weight: 500; }
 
   .tactical-box {
     background: var(--tactical-bg);
     border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 10.5px;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
   }
   .tac-head {
     font-family: var(--mono);
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--ink-soft);
     display: flex;
     justify-content: space-between;
   }
-  .status-tag { padding: 1px 4px; border-radius: 3px; font-weight: 700; font-size: 8.5px; }
+  .status-tag { padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; }
   .status-ok { background: rgba(52, 168, 83, 0.2); color: var(--ok); }
   .status-warn { background: rgba(217, 83, 63, 0.2); color: var(--alert); }
 
-  .tac-list { margin: 0; padding-left: 12px; line-height: 1.3; color: var(--ink); }
-  .loading-msg { text-align: center; padding: 20px; font-family: var(--mono); color: var(--ink-soft); font-size: 12px; }
+  .tac-list { margin: 0; padding-left: 16px; line-height: 1.4; color: var(--ink); }
+  .loading-msg { text-align: center; padding: 24px; font-family: var(--mono); color: var(--ink-soft); font-size: 14px; }
 </style>
 </head>
 <body>
@@ -203,17 +205,16 @@
 <div class="app-container">
 
   <header class="top-bar">
-    <p class="top-title">Тактичний Метео-Монітор · Построєння 1 | 2 | 3</p>
-    <div style="display:flex; gap:8px;">
+    <p class="top-title">Тактичний Метео-Монітор · 1 | 2 | 3</p>
+    <div style="display:flex; gap:10px;">
       <button class="btn" onclick="loadAllNP()">🔄 Оновити всі 3 НП</button>
       <button class="btn" onclick="toggleTheme()">🌓 Тема</button>
     </div>
   </header>
 
-  <!-- Контейнер сітки: 3 колонки поруч -->
   <div class="np-row-grid">
 
-    <!-- НП 1: Степногірськ -->
+    <!-- НП 1 -->
     <div class="np-column">
       <div class="np-header">
         <h2 class="np-title">1. Степногірськ</h2>
@@ -226,14 +227,14 @@
       </div>
       <div class="status-bar">
         <span>Статус: <b id="status-0">Очікування...</b></span>
-        <button class="btn" style="padding:1px 6px; font-size:9px;" onclick="loadNP(0)">Оновити</button>
+        <button class="btn" style="padding:2px 8px; font-size:11px;" onclick="loadNP(0)">Оновити</button>
       </div>
       <div class="days-list" id="grid-0">
         <div class="loading-msg">Завантаження...</div>
       </div>
     </div>
 
-    <!-- НП 2: Оріхів -->
+    <!-- НП 2 -->
     <div class="np-column">
       <div class="np-header">
         <h2 class="np-title">2. Оріхів</h2>
@@ -246,14 +247,14 @@
       </div>
       <div class="status-bar">
         <span>Статус: <b id="status-1">Очікування...</b></span>
-        <button class="btn" style="padding:1px 6px; font-size:9px;" onclick="loadNP(1)">Оновити</button>
+        <button class="btn" style="padding:2px 8px; font-size:11px;" onclick="loadNP(1)">Оновити</button>
       </div>
       <div class="days-list" id="grid-1">
         <div class="loading-msg">Завантаження...</div>
       </div>
     </div>
 
-    <!-- НП 3: Гуляйполе -->
+    <!-- НП 3 -->
     <div class="np-column">
       <div class="np-header">
         <h2 class="np-title">3. Гуляйполе</h2>
@@ -266,7 +267,7 @@
       </div>
       <div class="status-bar">
         <span>Статус: <b id="status-2">Очікування...</b></span>
-        <button class="btn" style="padding:1px 6px; font-size:9px;" onclick="loadNP(2)">Оновити</button>
+        <button class="btn" style="padding:2px 8px; font-size:11px;" onclick="loadNP(2)">Оновити</button>
       </div>
       <div class="days-list" id="grid-2">
         <div class="loading-msg">Завантаження...</div>
@@ -333,7 +334,7 @@ function renderCards(data) {
     const dayNum = `${d.getDate()} ${MONTHS[d.getMonth()] || 'серп'}`;
 
     let uavTag = 'СПРИЯТЛИВІ', tagClass = 'status-ok';
-    let uavNote = 'Умови нормованi для БпЛА.';
+    let uavNote = 'Умови нормовані для БпЛА.';
     if (maxGust >= 11 || totalPrecip > 2) {
       uavTag = 'ОБМЕЖЕНІ'; tagClass = 'status-warn';
       uavNote = `Пориви до ${maxGust} м/с — знесення.`;
@@ -436,7 +437,6 @@ function loadAllNP() {
   loadNP(2);
 }
 
-// Запуск при завантаженні
 loadAllNP();
 </script>
 
