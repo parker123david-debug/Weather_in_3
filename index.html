@@ -216,7 +216,6 @@
   .t-max { font-family: var(--display); font-weight: 700; font-size: 26px; }
   .t-min { font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink-soft); }
 
-  /* Список метрик зсунутий вліво */
   .metrics-list { display: flex; flex-direction: column; gap: 3px; font-size: 12px; }
   .m-row { display: flex; justify-content: space-between; align-items: center; }
   .m-row .lbl { color: var(--ink-soft); }
@@ -246,7 +245,6 @@
     color: var(--ink-soft);
   }
 
-  /* Виділені плашки статусів */
   .status-badge {
     font-family: var(--mono);
     font-size: 11px;
@@ -296,10 +294,10 @@
     <!-- НП 1 -->
     <div class="np-column">
       <div class="np-header">
-        <h2 class="np-title">1. Степногірськ</h2>
-        <div class="np-meta">Василівський р-н · <span class="np-coords" id="coords-0">47.5865°пн 35.3580°сх</span></div>
+        <h2 class="np-title" id="title-0">1. Степногірськ</h2>
+        <div class="np-meta"><span id="meta-0">Василівський р-н · </span><span class="np-coords" id="coords-0">47.5865°пн 35.3580°сх</span></div>
         <div class="search-row">
-          <input type="text" id="input-0" placeholder="47.5865, 35.3580">
+          <input type="text" id="input-0" placeholder="Назва або 47.5865, 35.3580">
           <button class="btn btn-main" onclick="updateNP(0)">Ок</button>
           <button class="btn" onclick="getGPS(0)">📍 GPS</button>
         </div>
@@ -316,10 +314,10 @@
     <!-- НП 2 -->
     <div class="np-column">
       <div class="np-header">
-        <h2 class="np-title">2. Оріхів</h2>
-        <div class="np-meta">Пологівський р-н · <span class="np-coords" id="coords-1">47.5683°пн 35.7833°сх</span></div>
+        <h2 class="np-title" id="title-1">2. Оріхів</h2>
+        <div class="np-meta"><span id="meta-1">Пологівський р-н · </span><span class="np-coords" id="coords-1">47.5683°пн 35.7833°сх</span></div>
         <div class="search-row">
-          <input type="text" id="input-1" placeholder="47.5683, 35.7833">
+          <input type="text" id="input-1" placeholder="Назва або 47.5683, 35.7833">
           <button class="btn btn-main" onclick="updateNP(1)">Ок</button>
           <button class="btn" onclick="getGPS(1)">📍 GPS</button>
         </div>
@@ -336,10 +334,10 @@
     <!-- НП 3 -->
     <div class="np-column">
       <div class="np-header">
-        <h2 class="np-title">3. Гуляйполе</h2>
-        <div class="np-meta">Пологівський р-н · <span class="np-coords" id="coords-2">47.6583°пн 36.2583°сх</span></div>
+        <h2 class="np-title" id="title-2">3. Гуляйполе</h2>
+        <div class="np-meta"><span id="meta-2">Пологівський р-н · </span><span class="np-coords" id="coords-2">47.6583°пн 36.2583°сх</span></div>
         <div class="search-row">
-          <input type="text" id="input-2" placeholder="47.6583, 36.2583">
+          <input type="text" id="input-2" placeholder="Назва або 47.6583, 36.2583">
           <button class="btn btn-main" onclick="updateNP(2)">Ок</button>
           <button class="btn" onclick="getGPS(2)">📍 GPS</button>
         </div>
@@ -365,7 +363,7 @@ const locations = [
 ];
 
 const WEEKDAYS = ['Неділя','Понеділок','Вівторок','Середа','Четвер','П\'ятниця','Субота'];
-const MONTHS = ['серп','вер','жовт','рист','груд','січ','лют'];
+const MONTHS = ['серп','вер','жовт','лист','груд','січ','лют'];
 
 function toggleTheme() {
   const html = document.documentElement;
@@ -378,7 +376,52 @@ function degToArrow(deg) {
   return dirs[Math.round(((deg + 180) % 360) / 45) % 8];
 }
 
-// Генерація анімованих SVG-іконок залежно від стану
+// Пошук назви НП за координатами (Reverse Geocoding)
+async function reverseGeocode(lat, lon) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=uk`);
+    if (res.ok) {
+      const data = await res.json();
+      const addr = data.address || {};
+      const name = addr.village || addr.town || addr.city || addr.hamlet || addr.suburb || addr.municipality || data.name;
+      const region = addr.county || addr.state || "";
+      if (name) return { name, region };
+    }
+  } catch (e) {}
+
+  try {
+    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=uk`);
+    if (res.ok) {
+      const data = await res.json();
+      const name = data.locality || data.city;
+      const region = data.principalSubdivision || "";
+      if (name) return { name, region };
+    }
+  } catch (e) {}
+
+  return { name: `НП (${lat.toFixed(2)}, ${lon.toFixed(2)})`, region: "" };
+}
+
+// Пошук координат за назвою НП (Forward Geocoding)
+async function forwardGeocode(query) {
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=uk&format=json`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        const item = data.results[0];
+        return {
+          lat: item.latitude,
+          lon: item.longitude,
+          name: item.name,
+          region: item.admin1 || item.admin2 || ""
+        };
+      }
+    }
+  } catch (e) {}
+  return null;
+}
+
 function getWeatherIcon(type) {
   if (type === 'thunder') {
     return `
@@ -399,7 +442,6 @@ function getWeatherIcon(type) {
         <path class="anim-cloud" fill="#90a4ae" d="M9,22 Q9,15 16,15 Q18,10 25,12 Q30,11 31,17 Q35,18 34,22 Z"/>
       </svg>`;
   } else {
-    // clear
     return `
       <svg class="weather-icon" viewBox="0 0 40 40">
         <g class="anim-sun-rays" stroke="#d97706" stroke-width="2">
@@ -440,7 +482,6 @@ function renderCards(data) {
     const totalPrecip = precips.reduce((a,b)=>a+b,0);
     const avgCloud = clouds.length ? clouds.reduce((a,b)=>a+b,0) / clouds.length : 0;
 
-    // Розрахунок НМХ
     let cloudBase = 800;
     if (temps.length > 0 && dews.length > 0) {
       const avgT = temps.reduce((a,b)=>a+b,0)/temps.length;
@@ -454,7 +495,6 @@ function renderCards(data) {
     const wday = WEEKDAYS[d.getDay()];
     const dayNum = `${d.getDate()} ${MONTHS[d.getMonth()] || 'серп'}`;
 
-    // Визначення стану погоди та відповідних кольорів
     const code = data.daily.weather_code ? data.daily.weather_code[i] : 0;
     let weatherType = 'clear';
     let weatherLabel = 'ЯСНО';
@@ -474,7 +514,6 @@ function renderCards(data) {
       badgeClass = 'badge-cloudy';
     }
 
-    // Тактичний статус БПЛА
     let uavTag = 'СПРИЯТЛИВІ', tagClass = 'status-ok';
     let uavNote = 'Нормальні умови для розвідувальних БпЛА.';
 
@@ -492,7 +531,6 @@ function renderCards(data) {
 
     return `
       <div class="card">
-        <!-- ЛІВА ЧАСТИНА: Погода та базові параметри -->
         <div class="card-left">
           <div class="card-top">
             <div class="day-group">
@@ -526,7 +564,6 @@ function renderCards(data) {
           </div>
         </div>
 
-        <!-- ПРАВА ЧАСТИНА: Тактичний вплив (БПЛА + Балістика) -->
         <div class="card-right">
           <div class="tactical-box">
             <div class="tac-head">
@@ -557,7 +594,7 @@ async function loadNP(idx) {
   const gridEl = document.getElementById(`grid-${idx}`);
   const statusEl = document.getElementById(`status-${idx}`);
 
-  statusEl.textContent = "Завантаження...";
+  statusEl.textContent = "Оновлення...";
   
   try {
     const raw = await fetchWeather(loc.lat, loc.lon);
@@ -569,28 +606,75 @@ async function loadNP(idx) {
   }
 }
 
-function updateNP(idx) {
+async function updateNP(idx) {
   const val = document.getElementById(`input-${idx}`).value.trim();
   if (!val) return;
+
+  const statusEl = document.getElementById(`status-${idx}`);
+  statusEl.textContent = "Пошук...";
+
   const parts = val.split(/[\s,]+/);
+  let isCoords = false;
+  let lat, lon;
+
   if (parts.length >= 2) {
-    const lat = parseFloat(parts[0]);
-    const lon = parseFloat(parts[1]);
+    lat = parseFloat(parts[0]);
+    lon = parseFloat(parts[1]);
     if (!isNaN(lat) && !isNaN(lon)) {
-      locations[idx].lat = lat;
-      locations[idx].lon = lon;
-      document.getElementById(`coords-${idx}`).textContent = `${lat.toFixed(4)}°пн ${lon.toFixed(4)}°сх`;
-      loadNP(idx);
+      isCoords = true;
     }
   }
+
+  if (isCoords) {
+    locations[idx].lat = lat;
+    locations[idx].lon = lon;
+    document.getElementById(`coords-${idx}`).textContent = `${lat.toFixed(4)}°пн ${lon.toFixed(4)}°сх`;
+
+    // Автоматичне визначення назви за координатами
+    const geo = await reverseGeocode(lat, lon);
+    if (geo && geo.name) {
+      locations[idx].name = geo.name;
+      document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
+      document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region} · ` : '';
+    }
+  } else {
+    // Пошук за текстом (назва міста/села)
+    const geo = await forwardGeocode(val);
+    if (geo) {
+      locations[idx].lat = geo.lat;
+      locations[idx].lon = geo.lon;
+      locations[idx].name = geo.name;
+      document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
+      document.getElementById(`coords-${idx}`).textContent = `${geo.lat.toFixed(4)}°пн ${geo.lon.toFixed(4)}°сх`;
+      document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region} · ` : '';
+    } else {
+      alert("Населений пункт не знайдено");
+      statusEl.textContent = "Не знайдено";
+      return;
+    }
+  }
+
+  loadNP(idx);
 }
 
 function getGPS(idx) {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      locations[idx].lat = pos.coords.latitude;
-      locations[idx].lon = pos.coords.longitude;
-      document.getElementById(`coords-${idx}`).textContent = `${pos.coords.latitude.toFixed(4)}°пн ${pos.coords.longitude.toFixed(4)}°сх`;
+    const statusEl = document.getElementById(`status-${idx}`);
+    statusEl.textContent = "Отримання GPS...";
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      locations[idx].lat = lat;
+      locations[idx].lon = lon;
+      document.getElementById(`coords-${idx}`).textContent = `${lat.toFixed(4)}°пн ${lon.toFixed(4)}°сх`;
+
+      const geo = await reverseGeocode(lat, lon);
+      if (geo && geo.name) {
+        locations[idx].name = geo.name;
+        document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
+        document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region} · ` : '';
+      }
+
       loadNP(idx);
     });
   }
