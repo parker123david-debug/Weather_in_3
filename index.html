@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Тактичний Метео-Монітор · 3 Сектори</title>
+<title>Мульти-Секторний Метео-Монітор (3 Локації)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-top: #e7ece9;
-    --bg-bottom: #dbe2dc;
-    --panel: #fbfcfb;
+    --bg: #dbe2dc;
+    --panel-bg: #f5f7f5;
+    --card-bg: #ffffff;
     --ink: #182420;
     --ink-soft: #57685f;
     --ink-faint: #8b998f;
@@ -19,26 +19,24 @@
     --tactical-bg: #f1f4f2;
     --sun: #c9862c;
     --alert: #a6402e;
-    --alert-soft: #f2ddd8;
     --wind: #2f6f63;
-    --radius: 12px;
+    --radius: 14px;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --display: 'Space Grotesk', var(--sans);
     --mono: 'JetBrains Mono', monospace;
   }
 
   [data-theme="dark"] {
-    --bg-top: #0f1412;
-    --bg-bottom: #161c19;
-    --panel: #1c2420;
+    --bg: #121815;
+    --panel-bg: #1a221e;
+    --card-bg: #212a25;
     --ink: #e3ebe6;
     --ink-soft: #a0b2a7;
     --ink-faint: #6e8075;
-    --line: #2b3b33;
-    --tactical-bg: #141b18;
+    --line: #2d3a33;
+    --tactical-bg: #161e1a;
     --sun: #e59e38;
     --alert: #d9533f;
-    --alert-soft: #4a221b;
     --wind: #439384;
   }
 
@@ -47,659 +45,392 @@
     margin: 0;
     font-family: var(--sans);
     color: var(--ink);
-    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-top) 100px, var(--bg-bottom) 101px, var(--bg-bottom) 100%);
+    background: var(--bg);
     min-height: 100vh;
+    padding: 20px;
     transition: background 0.3s, color 0.3s;
   }
   
-  .wrap-wide { max-width: 1750px; margin: 0 auto; padding: 16px 16px 40px; }
+  .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
 
-  .top-bar {
+  /* Верхня загальна панель керування */
+  .global-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--line);
+    background: var(--panel-bg);
+    padding: 16px 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
   }
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin: 0 0 2px;
-  }
-  h1 {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 22px;
-    margin: 0;
-  }
-
-  .top-actions { display: flex; gap: 10px; align-items: center; }
+  .global-title { margin: 0; font-family: var(--display); font-size: 20px; font-weight: 700; }
   
+  /* Кнопки */
   .btn {
     font-family: var(--sans);
     font-weight: 600;
-    font-size: 12px;
-    background: var(--ink);
-    color: var(--panel);
+    font-size: 13px;
+    background: #182420;
+    color: #ffffff;
     border: none;
-    border-radius: 6px;
-    padding: 6px 12px;
+    border-radius: 8px;
+    padding: 8px 16px;
     cursor: pointer;
     transition: opacity 0.2s;
   }
   .btn:hover { opacity: 0.88; }
-  .btn-secondary {
-    background: var(--panel);
-    color: var(--ink);
+  .btn-sec { background: var(--card-bg); color: var(--ink); border: 1px solid var(--line); }
+
+  /* Блок окремого сектору */
+  .sector-block {
+    background: var(--panel-bg);
     border: 1px solid var(--line);
-  }
-
-  /* 3-Колонкова сітка */
-  .sectors-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    align-items: start;
-  }
-
-  .sector-col {
-    background: rgba(255, 255, 255, 0.2);
     border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
   }
 
-  /* Хедер сектору */
-  .sector-card-hdr {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-  }
-  .sector-tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--wind);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .sector-title {
-    font-family: var(--display);
-    font-size: 18px;
-    font-weight: 700;
-    margin: 2px 0;
-  }
-  .sector-subtext {
-    font-size: 11.5px;
-    color: var(--ink-soft);
-    margin-bottom: 8px;
-  }
-  .sector-subtext .coords { font-family: var(--mono); color: var(--ink-faint); }
+  .sector-hdr { display: flex; flex-direction: column; gap: 4px; }
+  .sector-eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: 0.1em; }
+  .sector-name { font-family: var(--display); font-size: 32px; font-weight: 700; margin: 0; line-height: 1.1; }
+  .sector-subtext { font-size: 13px; color: var(--ink-soft); }
+  .sector-coords { font-family: var(--mono); color: var(--ink-faint); }
 
-  .search-row {
-    display: flex;
-    gap: 4px;
-  }
-  .search-row input {
+  /* Рядок пошуку */
+  .search-bar { display: flex; gap: 8px; max-width: 500px; margin-top: 6px; }
+  .search-bar input {
     flex: 1;
-    padding: 6px 8px;
+    padding: 8px 12px;
     border: 1px solid var(--line);
-    border-radius: 6px;
+    border-radius: 8px;
     font-family: var(--mono);
-    font-size: 11px;
-    background: var(--panel);
+    font-size: 12px;
+    background: var(--card-bg);
     color: var(--ink);
     outline: none;
   }
-  .search-row input:focus { border-color: var(--ink-soft); }
-  .search-row button {
-    padding: 4px 8px;
-    font-size: 11px;
+
+  /* Рядок статусу оновлення */
+  .update-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.03);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--ink-soft);
   }
 
-  /* Картки днів */
-  .days-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  /* Сітка з 5 карт на один сектор */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
   }
 
   .card {
-    background: var(--panel);
+    background: var(--card-bg);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 12px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    gap: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
   }
 
-  .date-row { display: flex; align-items: baseline; justify-content: space-between; }
-  .weekday { font-family: var(--display); font-weight: 600; font-size: 14px; text-transform: capitalize; }
+  .date-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .weekday { font-family: var(--display); font-weight: 700; font-size: 16px; }
   .daynum { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
 
-  .icon-row { display: flex; align-items: center; gap: 6px; }
-  .wicon { width: 32px; height: 32px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .wtype { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
+  .icon-row { display: flex; align-items: center; gap: 8px; }
+  .wicon { width: 32px; height: 32px; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .wtype { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; color: #fff; text-transform: uppercase; }
   .tag-clear { background: var(--sun); }
   .tag-mixed { background: #8a8f76; }
   .tag-cloud { background: var(--ink-soft); }
   .tag-rain { background: var(--wind); }
   .tag-storm { background: var(--alert); }
-  .tag-fog { background: #7c8a94; }
 
-  .horizon-rule-sm { height: 1px; background: var(--line); }
+  .temps { display: flex; align-items: baseline; gap: 6px; margin: 4px 0; }
+  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 28px; }
+  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 18px; color: var(--ink-soft); }
+  .temps .deg { font-size: 11px; color: var(--ink-soft); }
 
-  .temps { display: flex; align-items: baseline; gap: 6px; }
-  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 22px; }
-  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 15px; color: var(--ink-soft); }
-  .temps .deg { font-size: 11px; font-weight: 500; color: var(--ink-soft); }
-
-  .row { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; }
-  .row .label { color: var(--ink-soft); display: flex; align-items: center; gap: 4px; }
-  .row .value { font-family: var(--mono); font-weight: 500; text-align: right; }
-  .arrow { font-size: 12px; display: inline-block; color: var(--wind); }
-
-  .astro { display: flex; flex-direction: column; gap: 2px; }
-  .glyph { width: 10px; height: 10px; flex-shrink: 0; }
-  .glyph.sun-g { fill: var(--sun); }
-
-  .gauge { height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; margin-top: 2px; }
-  .gauge > span { display: block; height: 100%; background: #7c8a94; }
+  .row { display: flex; justify-content: space-between; font-size: 12px; }
+  .row .label { color: var(--ink-soft); }
+  .row .value { font-family: var(--mono); font-weight: 500; }
 
   .tactical-box {
     background: var(--tactical-bg);
     border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 8px 10px;
+    border-radius: 8px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    font-size: 11px;
   }
   .tactical-hdr {
     font-family: var(--mono);
-    font-size: 9.5px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
     color: var(--ink-soft);
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }
-  .badge { font-size: 8.5px; font-weight: 700; padding: 2px 4px; border-radius: 3px; text-transform: uppercase; }
+  .badge { font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 4px; }
   .badge-ok { background: #d2e7d6; color: #1e4620; }
   .badge-warn { background: #fef3cd; color: #856404; }
   .badge-crit { background: #f8d7da; color: #721c24; }
-  
-  [data-theme="dark"] .badge-ok { background: #1e3a24; color: #a3e0b0; }
-  [data-theme="dark"] .badge-warn { background: #3d3211; color: #f5d77f; }
-  [data-theme="dark"] .badge-crit { background: #4a1d20; color: #f2a4a8; }
 
-  .tac-list { font-size: 11px; line-height: 1.35; color: var(--ink); margin: 0; padding-left: 12px; }
-  .tac-list li { margin-bottom: 2px; }
-  .tac-metric { font-family: var(--mono); font-weight: 600; }
+  .tac-list { margin: 0; padding-left: 14px; line-height: 1.4; }
+  .foot-note { font-size: 10px; color: var(--ink-faint); margin-top: 4px; }
 
-  .state-msg {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 20px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--ink-soft);
-  }
-
-  /* Анімації */
-  @keyframes spin-sun { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  @keyframes float-cloud { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-  @keyframes rain-fall { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -12; } }
-  .anim-sun { transform-origin: 24px 24px; animation: spin-sun 22s linear infinite; }
-  .anim-cloud { animation: float-cloud 3.5s ease-in-out infinite; }
-  .anim-rain { stroke-dasharray: 4 4; animation: rain-fall 0.6s linear infinite; }
-
-  /* Адаптивність */
-  @media (max-width: 1200px) {
-    .sectors-grid { grid-template-columns: 1fr; }
-  }
+  .loading-msg { text-align: center; padding: 40px; color: var(--ink-soft); font-family: var(--mono); }
 </style>
 </head>
 <body>
-<div class="wrap-wide">
-  <header class="top-bar">
-    <div>
-      <p class="eyebrow">Оперативний Потрійний Метео-Монітор</p>
-      <h1>Тактичний Прогноз · 3 Сектори Контролю</h1>
-    </div>
-    <div class="top-actions">
-      <button class="btn btn-secondary" onclick="loadAllSectors()">Оновити всі 3 сектори</button>
-      <button class="btn btn-secondary" id="theme-btn" onclick="toggleTheme()">
-        <span id="theme-icon">🌙</span> <span id="theme-text">Темна</span>
-      </button>
+
+<div class="container">
+  <header class="global-header">
+    <h1 class="global-title">Оперативний Метео-Монітор · 3 Сектори</h1>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-sec" onclick="loadAllSectors()">Оновити всі 3 сектори</button>
+      <button class="btn btn-sec" onclick="toggleTheme()">🌓 Тема</button>
     </div>
   </header>
 
-  <div class="sectors-grid">
-    <!-- Сектор 1 -->
-    <div class="sector-col">
-      <div class="sector-card-hdr">
-        <div class="sector-tag">Сектор 01</div>
-        <div class="sector-title" id="loc-title-0">Степногірськ</div>
-        <div class="sector-subtext" id="loc-sub-0">Запорізька обл. · <span class="coords">47.5865, 35.3580</span></div>
-        <div class="search-row">
-          <input type="text" id="input-0" placeholder="Широта, довгота" onkeydown="if(event.key==='Enter') updateSector(0)">
-          <button class="btn" onclick="updateSector(0)">ОК</button>
-          <button class="btn btn-secondary" onclick="getGPS(0)" title="Моє GPS">📍</button>
-        </div>
-      </div>
-      <div id="state-0" class="state-msg">Завантажується...</div>
-      <div id="cards-0" class="days-list" style="display:none;"></div>
-    </div>
+  <!-- Сектор 1 -->
+  <div class="sector-block" id="sector-block-0"></div>
 
-    <!-- Сектор 2 -->
-    <div class="sector-col">
-      <div class="sector-card-hdr">
-        <div class="sector-tag">Сектор 02</div>
-        <div class="sector-title" id="loc-title-1">Оріхів</div>
-        <div class="sector-subtext" id="loc-sub-1">Пологівський р-н · <span class="coords">47.5683, 35.7833</span></div>
-        <div class="search-row">
-          <input type="text" id="input-1" placeholder="Широта, довгота" onkeydown="if(event.key==='Enter') updateSector(1)">
-          <button class="btn" onclick="updateSector(1)">ОК</button>
-          <button class="btn btn-secondary" onclick="getGPS(1)" title="Моє GPS">📍</button>
-        </div>
-      </div>
-      <div id="state-1" class="state-msg">Завантажується...</div>
-      <div id="cards-1" class="days-list" style="display:none;"></div>
-    </div>
+  <!-- Сектор 2 -->
+  <div class="sector-block" id="sector-block-1"></div>
 
-    <!-- Сектор 3 -->
-    <div class="sector-col">
-      <div class="sector-card-hdr">
-        <div class="sector-tag">Сектор 03</div>
-        <div class="sector-title" id="loc-title-2">Гуляйполе</div>
-        <div class="sector-subtext" id="loc-sub-2">Пологівський р-н · <span class="coords">47.6583, 36.2583</span></div>
-        <div class="search-row">
-          <input type="text" id="input-2" placeholder="Широта, довгота" onkeydown="if(event.key==='Enter') updateSector(2)">
-          <button class="btn" onclick="updateSector(2)">ОК</button>
-          <button class="btn btn-secondary" onclick="getGPS(2)" title="Моє GPS">📍</button>
-        </div>
-      </div>
-      <div id="state-2" class="state-msg">Завантажується...</div>
-      <div id="cards-2" class="days-list" style="display:none;"></div>
-    </div>
-  </div>
+  <!-- Сектор 3 -->
+  <div class="sector-block" id="sector-block-2"></div>
 </div>
 
 <script>
-// Дефолтні локації для трьох секторів
 const DEFAULT_SECTORS = [
-  { name: "Степногірськ", subtext: "Запорізька обл., Василівський р-н", lat: 47.5865, lon: 35.3580 },
-  { name: "Оріхів", subtext: "Запорізька обл., Пологівський р-н", lat: 47.5683, lon: 35.7833 },
-  { name: "Гуляйполе", subtext: "Запорізька обл., Пологівський р-н", lat: 47.6583, lon: 36.2583 }
+  { name: "Степногірськ", subtext: "Запорізька область, Василівський район", lat: 47.5865, lon: 35.3580 },
+  { name: "Оріхів", subtext: "Запорізька область, Пологівський район", lat: 47.5683, lon: 35.7833 },
+  { name: "Гуляйполе", subtext: "Запорізька область, Пологівський район", lat: 47.6583, lon: 36.2583 }
 ];
 
-let sectors = [];
-
-function initSectors() {
-  const saved = localStorage.getItem('tactical_sectors_v1');
-  if (saved) {
-    try { sectors = JSON.parse(saved); } catch(e) { sectors = DEFAULT_SECTORS; }
-  } else {
-    sectors = DEFAULT_SECTORS;
-  }
-}
+let sectors = JSON.parse(localStorage.getItem('tactical_sectors_v2')) || DEFAULT_SECTORS;
 
 function saveSectors() {
-  localStorage.setItem('tactical_sectors_v1', JSON.stringify(sectors));
-}
-
-function initTheme() {
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }
-  updateThemeUI();
+  localStorage.setItem('tactical_sectors_v2', JSON.stringify(sectors));
 }
 
 function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-  updateThemeUI();
-}
-
-function updateThemeUI() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
-  document.getElementById('theme-text').textContent = isDark ? 'Світла' : 'Темна';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
 }
 
-initTheme();
-initSectors();
+const WEEKDAYS = ['Неділя','Понеділок','Вівторок','Середа','Четвер','П\'ятниця','Субота'];
+const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
 
-const WEEKDAYS = ['нед','пон','вів','сер','чтв','птн','суб'];
-const MONTHS = ['січ','лют','бер','квi','тра','чер','лип','сер','вер','жов','лис','гру'];
-
-function clamp(v,mn,mx){ return Math.max(mn, Math.min(mx, v)); }
-
-function degToArrow(deg){
-  if (deg===null || deg===undefined || isNaN(deg)) return '—';
-  const to = (deg + 180) % 360;
-  const idx = Math.round(to/45) % 8;
-  return ['↑','↗','→','↘','↓','↙','←','↖'][idx];
+function degToArrow(deg) {
+  if (deg === undefined || deg === null) return '—';
+  const dirs = ['↑','↗','→','↘','↓','↙','←','↖'];
+  return dirs[Math.round(((deg + 180) % 360) / 45) % 8];
 }
 
-function classifyDay(codes, avgCloud){
-  const has = arr => codes.some(c => arr.includes(c));
-  if (has([95,96,99])) return 'гроза';
-  if (has([65,82])) return 'злива';
-  if (has([51,53,55,56,57,61,63,66,67,80,81])) return 'дощ';
-  if (has([45,48])) return 'туман';
-  if (avgCloud < 20) return 'ясно';
-  if (avgCloud < 50) return 'мінлива хмарність';
-  if (avgCloud < 80) return 'хмарно з проясненнями';
-  return 'похмуро';
-}
-
-const TAG_CLASS = {
-  'ясно':'tag-clear', 'мінлива хмарність':'tag-mixed', 'хмарно з проясненнями':'tag-mixed',
-  'похмуро':'tag-cloud', 'дощ':'tag-rain', 'злива':'tag-rain', 'гроза':'tag-storm', 'туман':'tag-fog'
-};
-
-function iconFor(type){
-  const s = 'class="wicon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"';
-  const cloud = `<g class="anim-cloud"><circle cx="17" cy="27" r="7"/><circle cx="26" cy="21" r="9"/><circle cx="34" cy="27" r="6.5"/><rect x="13" y="26" width="27" height="10" rx="5"/></g>`;
-  const sun = `<g class="anim-sun"><circle cx="24" cy="24" r="8"/><line x1="24" y1="4" x2="24" y2="10"/><line x1="24" y1="38" x2="24" y2="44"/><line x1="4" y1="24" x2="10" y2="24"/><line x1="38" y1="24" x2="44" y2="24"/><line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/><line x1="33.5" y1="33.5" x2="37.5" y2="37.5"/><line x1="10.5" y1="37.5" x2="14.5" y2="33.5"/><line x1="33.5" y1="14.5" x2="37.5" y2="10.5"/></g>`;
-  const smallSun = `<g class="anim-sun" style="transform-origin: 12px 13px;"><circle cx="12" cy="13" r="6"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="2" y1="13" x2="5" y2="13"/><line x1="5" y1="6" x2="7.2" y2="8.2"/></g>`;
-  const rainDrops = `<g class="anim-rain"><line x1="18" y1="40" x2="15" y2="46"/><line x1="26" y1="40" x2="23" y2="46"/><line x1="34" y1="40" x2="31" y2="46"/></g>`;
-
-  switch(type){
-    case 'ясно': return `<svg ${s}>${sun}</svg>`;
-    case 'мінлива хмарність': return `<svg ${s}>${cloud}${smallSun}</svg>`;
-    case 'хмарно з проясненнями': return `<svg ${s}><g opacity="0.55">${smallSun}</g>${cloud}</svg>`;
-    case 'похмуро': return `<svg ${s}>${cloud}</svg>`;
-    case 'дощ': case 'злива': case 'гроза': return `<svg ${s}>${cloud}${rainDrops}</svg>`;
-    default: return `<svg ${s}>${cloud}</svg>`;
-  }
-}
-
-const SUN_GLYPH = `<svg class="glyph sun-g" viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg>`;
-
-function fmtTime(iso){ return iso ? iso.split('T')[1] : '—'; }
-
-function formatDateHuman(dateStr){
-  const [yyyy, mm, dd] = dateStr.split('-');
-  const d = new Date(dateStr+'T00:00:00');
-  return { 
-    weekday: WEEKDAYS[d.getDay()], 
-    human: `${d.getDate()} ${MONTHS[d.getMonth()]}`,
-    formattedDate: `${dd}.${mm}`
-  };
-}
-
-async function reverseGeocode(lat, lon) {
-  try {
-    const resp = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=uk`);
-    if (!resp.ok) throw new Error();
-    const data = await resp.json();
-    const name = data.locality || data.city || data.localityInfo?.administrative?.[2]?.name || "Задана точка";
-    const subtext = data.principalSubdivision || data.countryName || "Локація";
-    return { name, subtext };
-  } catch (err) {
-    return { name: "Точка на карті", subtext: "За координатами" };
-  }
-}
-
-async function fetchWeather(lat, lon){
+async function fetchWeatherData(lat, lon) {
   const base = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&timezone=Europe%2FKyiv&forecast_days=5&windspeed_unit=ms`;
   const hourly = 'temperature_2m,dew_point_2m,weather_code,cloud_cover,visibility,wind_speed_10m,wind_gusts_10m,precipitation';
   const daily = 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,wind_direction_10m_dominant';
-
+  
   const resp = await fetch(`${base}&hourly=${hourly}&daily=${daily}`);
-  if (!resp.ok) throw new Error('Failed');
+  if (!resp.ok) throw new Error('API Error');
   return await resp.json();
 }
 
-function processDays(data){
-  const dailyTimes = data.daily.time;
-  const hTemp = data.hourly.temperature_2m || [];
-  const hDew = data.hourly.dew_point_2m || [];
-  const hCloud = data.hourly.cloud_cover || [];
-  const hVis = data.hourly.visibility || [];
-  const hCode = data.hourly.weather_code || [];
-  const hWind = data.hourly.wind_speed_10m || [];
-  const hGust = data.hourly.wind_gusts_10m || [];
-  const hPrecip = data.hourly.precipitation || [];
-  const dWindDir = data.daily.wind_direction_10m_dominant || [];
-
-  return dailyTimes.map((date, i) => {
+function processForecast(data) {
+  return data.daily.time.map((dateStr, i) => {
     const idxs = [];
-    for (let k=0; k<data.hourly.time.length; k++){ if (data.hourly.time[k].startsWith(date)) idxs.push(k); }
+    data.hourly.time.forEach((t, k) => { if (t.startsWith(dateStr)) idxs.push(k); });
 
-    const temps = idxs.map(k=>hTemp[k] ?? 0);
-    const dews = idxs.map(k=>hDew[k] ?? 0);
-    const clouds = idxs.map(k=>hCloud[k] ?? 0);
-    const vis = idxs.map(k=>hVis[k] ?? 10000);
-    const codes = idxs.map(k=>hCode[k] ?? 0);
-    const winds = idxs.map(k=>hWind[k] ?? 0);
-    const gusts = idxs.map(k=>hGust[k] ?? 0);
-    const precips = idxs.map(k=>hPrecip[k] ?? 0);
+    const temps = idxs.map(k => data.hourly.temperature_2m[k]);
+    const dews = idxs.map(k => data.hourly.dew_point_2m[k]);
+    const clouds = idxs.map(k => data.hourly.cloud_cover[k]);
+    const winds = idxs.map(k => data.hourly.wind_speed_10m[k]);
+    const gusts = idxs.map(k => data.hourly.wind_gusts_10m[k]);
+    const precips = idxs.map(k => data.hourly.precipitation[k]);
 
-    const avgCloud = clouds.length ? clouds.reduce((a,b)=>a+b,0)/clouds.length : 0;
-    const minVis = vis.length ? Math.min(...vis) : 10000;
+    const avgCloud = clouds.reduce((a,b)=>a+b,0) / clouds.length;
+    const maxT = Math.max(...temps);
+    const minT = Math.min(...temps);
+    const maxGust = Math.round(Math.max(...gusts));
+    const minWind = Math.round(Math.min(...winds));
+    const maxWind = Math.round(Math.max(...winds));
+    const totalPrecip = precips.reduce((a,b)=>a+b,0);
 
-    let cloudBase = 0;
-    if (temps.length){
-      const maxT = Math.max(...temps);
-      const mi = temps.indexOf(maxT);
-      const spread = Math.max(0, temps[mi]-dews[mi]);
-      cloudBase = Math.max(0, Math.round((125*spread)/50)*50);
-    }
+    // Розрахунок нижньої межі хмар
+    const maxIdx = temps.indexOf(maxT);
+    const spread = Math.max(0, maxT - dews[maxIdx]);
+    const cloudBase = Math.round((125 * spread) / 50) * 50;
 
-    const fogHours = codes.filter(c=>c===45||c===48).length;
-    let fogProb = clamp(Math.round((2000-minVis)/20), 0, 95);
-    if (fogHours>0) fogProb = Math.max(fogProb, 65);
+    let wType = 'ясно';
+    if (totalPrecip > 2) wType = 'дощ';
+    else if (avgCloud > 70) wType = 'похмуро';
+    else if (avgCloud > 30) wType = 'хмарно з проясненнями';
 
     return {
-      date,
-      weatherType: classifyDay(codes, avgCloud),
-      codes,
-      tMax: Math.round(data.daily.temperature_2m_max[i]),
-      tMin: Math.round(data.daily.temperature_2m_min[i]),
-      windMin: winds.length ? Math.round(Math.min(...winds)) : 0,
-      windMax: winds.length ? Math.round(Math.max(...winds)) : 0,
-      gustMax: gusts.length ? Math.round(Math.max(...gusts)) : 0,
-      precipTotal: precips.length ? precips.reduce((a,b)=>a+b,0) : 0,
-      windArrow: degToArrow(dWindDir[i]),
-      sunrise: fmtTime(data.daily.sunrise[i]),
-      sunset: fmtTime(data.daily.sunset[i]),
-      cloudBase, fogProb
+      dateStr,
+      wType,
+      maxT: Math.round(maxT),
+      minT: Math.round(minT),
+      minWind, maxWind, maxGust,
+      totalPrecip,
+      cloudBase,
+      windArrow: degToArrow(data.daily.wind_direction_10m_dominant[i]),
+      sunrise: data.daily.sunrise[i].split('T')[1],
+      sunset: data.daily.sunset[i].split('T')[1]
     };
   });
 }
 
-function calcTactical(day) {
-  let uavStatus = 'ok', uavStatusText = 'Сприятливі', uavNotes = [];
+function renderSectorHTML(idx, sector, forecast = null, loading = false) {
+  const block = document.getElementById(`sector-block-${idx}`);
+  const now = new Date().toLocaleTimeString('uk-UA', {hour: '2-digit', minute:'2-digit'});
 
-  if (day.gustMax >= 14 || day.windMax >= 12) {
-    uavStatus = 'crit';
-    uavNotes.push(`Пориви вітру до <span class="tac-metric">${day.gustMax} м/с</span> — критично для FPV.`);
-  } else if (day.gustMax >= 9 || day.windMax >= 7) {
-    if (uavStatus !== 'crit') uavStatus = 'warn';
-    uavNotes.push(`Вітер до <span class="tac-metric">${day.gustMax} м/с</span> — перевитрата АКБ.`);
+  let cardsContent = '';
+  if (loading) {
+    cardsContent = `<div class="loading-msg">Завантаження метеоданих для сектору...</div>`;
+  } else if (forecast) {
+    cardsContent = `<div class="cards-grid">` + forecast.map(day => {
+      const d = new Date(day.dateStr + 'T00:00:00');
+      const wday = WEEKDAYS[d.getDay()];
+      const dayNum = `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+      const formattedDate = `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+
+      let uavBadge = 'СПРИЯТЛИВІ', uavClass = 'badge-ok';
+      let uavNote = 'Нормальні умови для розвідувальних та ударних БпЛА.';
+      if (day.maxGust >= 12 || day.totalPrecip > 3) {
+        uavBadge = 'ОБМЕЖЕНІ'; uavClass = 'badge-warn';
+        uavNote = `Пориви вітру до ${day.maxGust} м/с — нестабільність польоту, витрата АКБ.`;
+      }
+
+      return `
+        <div class="card">
+          <div class="date-row">
+            <span class="weekday">${wday}</span>
+            <span class="daynum">${dayNum} · ${formattedDate}</span>
+          </div>
+          <div class="icon-row">
+            <span class="wtype tag-clear">${day.wType}</span>
+          </div>
+          <div class="temps">
+            <span class="tmax">${day.maxT}°</span>
+            <span class="tmin">${day.minT}°</span>
+            <span class="deg">T max/min</span>
+          </div>
+          <div class="row">
+            <span class="label">Вітер (пориви)</span>
+            <span class="value">${day.windArrow} ${day.minWind}-${day.maxWind} м/с (до ${day.maxGust})</span>
+          </div>
+          <div class="row">
+            <span class="label">Схід / захід Сонця</span>
+            <span class="value">${day.sunrise} / ${day.sunset}</span>
+          </div>
+          <div class="row">
+            <span class="label">Нижня межа хмар</span>
+            <span class="value">≈ ${day.cloudBase} м</span>
+          </div>
+          
+          <div class="tactical-box">
+            <div class="tactical-hdr">
+              <span>ВПЛИВ НА БПЛА</span>
+              <span class="badge ${uavClass}">${uavBadge}</span>
+            </div>
+            <ul class="tac-list">
+              <li>${uavNote}</li>
+            </ul>
+          </div>
+
+          <div class="tactical-box">
+            <div class="tactical-hdr">
+              <span>БАЛІСТИКА / АРТИЛЕРІЯ</span>
+            </div>
+            <ul class="tac-list">
+              <li>Вітрове знесення помірне (≤${day.maxWind} м/с).</li>
+              <li>Відхилення T повітря від табличної (15°C): ${day.maxT - 15 > 0 ? '+' : ''}${day.maxT - 15}°C.</li>
+            </ul>
+          </div>
+          <div class="foot-note">* розраховано за метеопараметрами моделі</div>
+        </div>
+      `;
+    }).join('') + `</div>`;
   }
 
-  const rainCrit = [63, 65, 66, 67, 81, 82, 95, 96, 99]; 
-  const rainWarn = [51, 53, 55, 56, 57, 61, 80]; 
-
-  if (day.codes.some(c => rainCrit.includes(c))) {
-    uavStatus = 'crit';
-    uavNotes.push(`Сильні опади (${day.precipTotal.toFixed(1)} мм) — ризик замикання.`);
-  } else if (day.codes.some(c => rainWarn.includes(c)) || day.precipTotal > 0.5) {
-    if (uavStatus !== 'crit') uavStatus = 'warn';
-    uavNotes.push(`Опади (${day.precipTotal.toFixed(1)} мм) — намокання оптики.`);
-  }
-
-  if (day.cloudBase > 0 && day.cloudBase < 300) {
-    if (uavStatus !== 'crit') uavStatus = 'warn';
-    uavNotes.push(`Низька хмарність (<span class="tac-metric">${day.cloudBase} м</span>).`);
-  }
-
-  if (day.fogProb >= 60) {
-    uavStatus = 'crit';
-    uavNotes.push(`Туман (<span class="tac-metric">${day.fogProb}%</span>) — відсутність видимості.`);
-  }
-
-  if (uavNotes.length === 0) uavNotes.push('Нормальні умови для БпЛА.');
-  if (uavStatus === 'warn') uavStatusText = 'Обмежені';
-  if (uavStatus === 'crit') uavStatusText = 'Критичні';
-
-  const artNotes = [];
-  if (day.gustMax >= 10) artNotes.push(`Вітер до <span class="tac-metric">${day.gustMax} м/с</span> — розсіювання.`);
-  else artNotes.push(`Вітер помірний (<span class="tac-metric">≤${day.gustMax} м/с</span>).`);
-
-  const avgTemp = (day.tMax + day.tMin) / 2;
-  const tempDelta = Math.round(avgTemp - 15);
-  if (Math.abs(tempDelta) >= 5) {
-    const sign = tempDelta > 0 ? '+' : '';
-    artNotes.push(`ΔT від табличної: <span class="tac-metric">${sign}${tempDelta}°C</span>.`);
-  }
-
-  return { uavStatus, uavStatusText, uavNotes, artNotes };
-}
-
-function dayCardHTML(day){
-  const { weekday, human, formattedDate } = formatDateHuman(day.date);
-  const tag = TAG_CLASS[day.weatherType] || 'tag-cloud';
-  const tac = calcTactical(day);
-  const uavBadgeClass = tac.uavStatus === 'ok' ? 'badge-ok' : (tac.uavStatus === 'warn' ? 'badge-warn' : 'badge-crit');
-
-  return `
-  <div class="card">
-    <div class="date-row">
-      <span class="weekday">${weekday}</span>
-      <span class="daynum">${human} · ${formattedDate}</span>
-    </div>
-    <div class="icon-row">
-      ${iconFor(day.weatherType)}
-      <span class="wtype ${tag}">${day.weatherType}</span>
-    </div>
-    <div class="horizon-rule-sm"></div>
-    <div class="temps">
-      <span class="tmax">${day.tMax}°</span>
-      <span class="tmin">${day.tMin}°</span>
-      <span class="deg">T max/min</span>
-    </div>
-    <div class="row">
-      <span class="label">Вітер (пориви)</span>
-      <span class="value"><span class="arrow">${day.windArrow}</span> ${day.windMin}–${day.windMax} м/с <span style="font-size:9.5px; color:var(--ink-soft);">(до ${day.gustMax})</span></span>
-    </div>
-    <div class="astro">
-      <div class="row"><span class="label">${SUN_GLYPH} Схід/Захід</span><span class="value">${day.sunrise} / ${day.sunset}</span></div>
-    </div>
-    <div class="horizon-rule-sm"></div>
-    <div class="row"><span class="label">Нижня межа хмар</span><span class="value">≈ ${day.cloudBase} м</span></div>
-    <div>
-      <div class="row"><span class="label">Туман</span><span class="value">${day.fogProb}%</span></div>
-      <div class="gauge"><span style="width:${day.fogProb}%"></span></div>
-    </div>
-
-    <div class="tactical-box">
-      <div class="tactical-hdr">
-        <span>Вплив на БпЛА</span>
-        <span class="badge ${uavBadgeClass}">${tac.uavStatusText}</span>
+  block.innerHTML = `
+    <div class="sector-hdr">
+      <div class="sector-eyebrow">Прогноз погоди та метеоумов · 5 днів</div>
+      <h2 class="sector-name">${sector.name}</h2>
+      <div class="sector-subtext">${sector.subtext} · <span class="sector-coords">${sector.lat.toFixed(4)}°пн ${sector.lon.toFixed(4)}°сх</span></div>
+      
+      <div class="search-bar">
+        <input type="text" id="input-${idx}" placeholder="Введіть координати (напр. 47.5865, 35.3580)">
+        <button class="btn" onclick="updateSectorCoords(${idx})">Завантажити</button>
+        <button class="btn btn-sec" onclick="getGPS(${idx})">📍 GPS</button>
       </div>
-      <ul class="tac-list">
-        ${tac.uavNotes.map(n => `<li>${n}</li>`).join('')}
-      </ul>
     </div>
 
-    <div class="tactical-box">
-      <div class="tactical-hdr">
-        <span>Балістика / Арта</span>
-      </div>
-      <ul class="tac-list">
-        ${tac.artNotes.map(n => `<li>${n}</li>`).join('')}
-      </ul>
+    <div class="update-bar">
+      <span>Оновлено: <b>${now}</b></span>
+      <button class="btn btn-sec" style="padding: 4px 10px; font-size: 11px;" onclick="loadSector(${idx})">Оновити зараз</button>
     </div>
-  </div>`;
-}
 
-function updateSectorHeader(idx) {
-  const s = sectors[idx];
-  document.getElementById(`loc-title-${idx}`).textContent = s.name;
-  document.getElementById(`loc-sub-${idx}`).innerHTML = `${s.subtext} · <span class="coords">${s.lat.toFixed(4)}, ${s.lon.toFixed(4)}</span>`;
+    ${cardsContent}
+  `;
 }
 
 async function loadSector(idx) {
-  const s = sectors[idx];
-  updateSectorHeader(idx);
-  
-  const stateEl = document.getElementById(`state-${idx}`);
-  const cardsEl = document.getElementById(`cards-${idx}`);
-  
-  stateEl.style.display = 'block';
-  stateEl.textContent = 'Оновлюю дані...';
-  cardsEl.style.display = 'none';
-
+  renderSectorHTML(idx, sectors[idx], null, true);
   try {
-    const raw = await fetchWeather(s.lat, s.lon);
-    const days = processDays(raw);
-    cardsEl.innerHTML = days.map(dayCardHTML).join('');
-    stateEl.style.display = 'none';
-    cardsEl.style.display = 'flex';
-  } catch (e) {
-    stateEl.textContent = 'Помилка завантаження метеоданих.';
+    const raw = await fetchWeatherData(sectors[idx].lat, sectors[idx].lon);
+    const processed = processForecast(raw);
+    renderSectorHTML(idx, sectors[idx], processed, false);
+  } catch (err) {
+    document.getElementById(`sector-block-${idx}`).innerHTML += `<div style="color:var(--alert); padding:10px;">Помилка завантаження даних.</div>`;
   }
 }
 
-async function updateSector(idx) {
-  const inputVal = document.getElementById(`input-${idx}`).value.trim();
-  if (!inputVal) return;
-
-  const parts = inputVal.split(/[\s,]+/);
-  if (parts.length < 2) {
-    alert('Введіть координати через кому або пробіл (напр. 47.5683, 35.7833)');
-    return;
+async function updateSectorCoords(idx) {
+  const val = document.getElementById(`input-${idx}`).value.trim();
+  if (!val) return;
+  const parts = val.split(/[\s,]+/);
+  if (parts.length >= 2) {
+    const lat = parseFloat(parts[0]);
+    const lon = parseFloat(parts[1]);
+    if (!isNaN(lat) && !isNaN(lon)) {
+      sectors[idx].lat = lat;
+      sectors[idx].lon = lon;
+      sectors[idx].name = `Сектор (${lat.toFixed(2)}, ${lon.toFixed(2)})`;
+      saveSectors();
+      loadSector(idx);
+    }
   }
-
-  const lat = parseFloat(parts[0]);
-  const lon = parseFloat(parts[1]);
-
-  if (isNaN(lat) || isNaN(lon)) {
-    alert('Некоректний формат координат');
-    return;
-  }
-
-  const geo = await reverseGeocode(lat, lon);
-  sectors[idx] = { name: geo.name, subtext: geo.subtext, lat, lon };
-  saveSectors();
-  loadSector(idx);
 }
 
 function getGPS(idx) {
-  if (!navigator.geolocation) {
-    alert('Геолокація не підтримується.');
-    return;
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      sectors[idx].lat = pos.coords.latitude;
+      sectors[idx].lon = pos.coords.longitude;
+      sectors[idx].name = "Моя локація (GPS)";
+      saveSectors();
+      loadSector(idx);
+    });
   }
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-    document.getElementById(`input-${idx}`).value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-    await updateSector(idx);
-  }, () => {
-    alert('Не вдалося отримати GPS.');
-  });
 }
 
 function loadAllSectors() {
@@ -708,8 +439,9 @@ function loadAllSectors() {
   }
 }
 
-// Початковий запуск
+// Початковий запуск для всіх 3 блоків
 loadAllSectors();
 </script>
+
 </body>
 </html>
