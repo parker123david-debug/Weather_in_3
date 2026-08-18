@@ -52,7 +52,7 @@
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
   }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 24px 20px 60px; }
 
   header { padding-top: 4px; }
   .top-row {
@@ -190,28 +190,29 @@
   #state-error { display: none; border-color: var(--alert-soft); }
   #state-error b { display: block; color: var(--alert); font-size: 14.5px; margin-bottom: 6px; }
 
+  /* Сітка з 5 картками у рядок для десктопу */
   #cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
   }
   .card {
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 16px;
+    padding: 14px 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
   }
   .card .date-row { display: flex; align-items: baseline; justify-content: space-between; }
-  .card .weekday { font-family: var(--display); font-weight: 600; font-size: 15px; text-transform: capitalize; }
-  .card .daynum { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+  .card .weekday { font-family: var(--display); font-weight: 600; font-size: 14.5px; text-transform: capitalize; }
+  .card .daynum { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); }
 
-  .icon-row { display: flex; align-items: center; gap: 10px; }
-  .wicon { width: 42px; height: 42px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .wtype { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
+  .icon-row { display: flex; align-items: center; gap: 8px; }
+  .wicon { width: 38px; height: 38px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .wtype { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
   .tag-clear { background: var(--sun); }
   .tag-mixed { background: #8a8f76; }
   .tag-cloud { background: var(--ink-soft); }
@@ -222,14 +223,14 @@
   .horizon-rule-sm { height: 1px; background: var(--line); }
 
   .temps { display: flex; align-items: baseline; gap: 6px; }
-  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 26px; }
-  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 17px; color: var(--ink-soft); }
-  .temps .deg { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 24px; }
+  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink-soft); }
+  .temps .deg { font-size: 12px; font-weight: 500; color: var(--ink-soft); }
 
-  .row { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; }
-  .row .label { color: var(--ink-soft); display: flex; align-items: center; gap: 5px; }
+  .row { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; }
+  .row .label { color: var(--ink-soft); display: flex; align-items: center; gap: 4px; }
   .row .value { font-family: var(--mono); font-weight: 500; text-align: right; }
-  .arrow { font-size: 15px; display: inline-block; color: var(--wind); }
+  .arrow { font-size: 14px; display: inline-block; color: var(--wind); }
 
   .astro { display: flex; flex-direction: column; gap: 4px; }
   .astro .row .value { display: flex; align-items: center; gap: 4px; }
@@ -243,24 +244,24 @@
     background: var(--tactical-bg);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 9px;
+    padding: 8px;
     margin-top: 2px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
   }
   .tactical-hdr {
     font-family: var(--mono);
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     color: var(--ink-soft);
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+  .badge { font-size: 9.5px; font-weight: 700; padding: 2px 5px; border-radius: 4px; text-transform: uppercase; }
   .badge-ok { background: #d2e7d6; color: #1e4620; }
   .badge-warn { background: #fef3cd; color: #856404; }
   .badge-crit { background: #f8d7da; color: #721c24; }
@@ -269,11 +270,11 @@
   [data-theme="dark"] .badge-warn { background: #3d3211; color: #f5d77f; }
   [data-theme="dark"] .badge-crit { background: #4a1d20; color: #f2a4a8; }
 
-  .tac-list { font-size: 11.5px; line-height: 1.35; color: var(--ink); margin: 0; padding-left: 14px; }
+  .tac-list { font-size: 11px; line-height: 1.35; color: var(--ink); margin: 0; padding-left: 12px; }
   .tac-list li { margin-bottom: 2px; }
   .tac-metric { font-family: var(--mono); font-weight: 600; }
 
-  .approx { font-size: 10.5px; color: var(--ink-faint); margin-top: 1px; }
+  .approx { font-size: 10px; color: var(--ink-faint); margin-top: 1px; }
 
   /* CSS Анімації погоди */
   @keyframes spin-sun { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -288,8 +289,13 @@
   .anim-fog { animation: fog-drift 3s ease-in-out infinite; }
   .anim-flash { animation: storm-flash 1.2s ease-in-out infinite; }
 
+  /* Адаптація для планшетів */
+  @media (max-width: 1180px) {
+    #cards { grid-template-columns: repeat(3, 1fr); }
+  }
+
   /* Мобільна адаптація */
-  @media (max-width: 600px) {
+  @media (max-width: 720px) {
     .wrap { padding: 14px 12px 40px; }
     header { text-align: left; }
     h1 { font-size: 22px; }
