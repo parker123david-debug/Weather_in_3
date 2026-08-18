@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Погода та Тактичний Прогноз</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-top: #e7ece9;
+    --bg-bottom: #dbe2dc;
+    --panel: #fbfcfb;
+    --ink: #182420;
+    --ink-soft: #57685f;
+    --ink-faint: #8b998f;
+    --line: #cdd6cd;
+    --tactical-bg: #f1f4f2;
+    --sun: #c9862c;
+    --moon: #3e5c76;
+    --alert: #a6402e;
+    --alert-soft: #f2ddd8;
+    --wind: #2f6f63;
+    --radius: 16px;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --display: 'Space Grotesk', var(--sans);
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  [data-theme="dark"] {
+    --bg-top: #0f1412;
+    --bg-bottom: #161c19;
+    --panel: #1c2420;
+    --ink: #e3ebe6;
+    --ink-soft: #a0b2a7;
+    --ink-faint: #6e8075;
+    --line: #2b3b33;
+    --tactical-bg: #141b18;
+    --sun: #e59e38;
+    --alert: #d9533f;
+    --alert-soft: #4a221b;
+    --wind: #439384;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-top) 120px, var(--bg-bottom) 121px, var(--bg-bottom) 100%);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  header { padding-top: 4px; }
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  
+  /* Кнопка перемикання теми */
+  .theme-toggle {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .theme-toggle:hover { border-color: var(--ink-soft); }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(24px, 5vw, 42px);
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+  .subcap {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+  }
+  .subcap .coords { font-family: var(--mono); color: var(--ink-faint); }
+
+  .search-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    max-width: 600px;
+  }
+  .search-box input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--panel);
+    color: var(--ink);
+    outline: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .search-box input:focus { border-color: var(--ink-soft); }
+  .search-box button {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13px;
+    background: var(--ink);
+    color: var(--panel);
+    border: none;
+    border-radius: 8px;
+    padding: 0 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+  .search-box button:hover { opacity: .88; }
+  .btn-geo {
+    background: var(--panel) !important;
+    color: var(--ink) !important;
+    border: 1px solid var(--line) !important;
+    padding: 0 10px !important;
+  }
+
+  .horizon-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line) 15%, var(--line) 85%, transparent);
+    margin: 0 0 18px;
+  }
+
+  .status-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .status-item b { color: var(--ink); font-weight: 600; }
+  .status-item { font-family: var(--mono); }
+  #refresh-btn {
+    margin-left: auto;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--panel);
+    background: var(--ink);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  #refresh-btn:hover { opacity: .88; }
+  #refresh-btn:disabled { opacity: .5; cursor: default; }
+
+  #state-loading, #state-error {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 30px 20px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+  }
+  #state-error { display: none; border-color: var(--alert-soft); }
+  #state-error b { display: block; color: var(--alert); font-size: 14.5px; margin-bottom: 6px; }
+
+  #cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+  .card .date-row { display: flex; align-items: baseline; justify-content: space-between; }
+  .card .weekday { font-family: var(--display); font-weight: 600; font-size: 15px; text-transform: capitalize; }
+  .card .daynum { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+
+  .icon-row { display: flex; align-items: center; gap: 10px; }
+  .wicon { width: 42px; height: 42px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .wtype { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
+  .tag-clear { background: var(--sun); }
+  .tag-mixed { background: #8a8f76; }
+  .tag-cloud { background: var(--ink-soft); }
+  .tag-rain { background: var(--wind); }
+  .tag-storm { background: var(--alert); }
+  .tag-fog { background: #7c8a94; }
+
+  .horizon-rule-sm { height: 1px; background: var(--line); }
+
+  .temps { display: flex; align-items: baseline; gap: 6px; }
+  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 26px; }
+  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 17px; color: var(--ink-soft); }
+  .temps .deg { font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+
+  .row { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; }
+  .row .label { color: var(--ink-soft); display: flex; align-items: center; gap: 5px; }
+  .row .value { font-family: var(--mono); font-weight: 500; text-align: right; }
+  .arrow { font-size: 15px; display: inline-block; color: var(--wind); }
+
+  .astro { display: flex; flex-direction: column; gap: 4px; }
+  .astro .row .value { display: flex; align-items: center; gap: 4px; }
+  .glyph { width: 12px; height: 12px; flex-shrink: 0; }
+  .glyph.sun-g { fill: var(--sun); }
+
+  .gauge { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; margin-top: 2px; }
+  .gauge > span { display: block; height: 100%; background: #7c8a94; }
+
+  .tactical-box {
+    background: var(--tactical-bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px;
+    margin-top: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .tactical-hdr {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .badge { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+  .badge-ok { background: #d2e7d6; color: #1e4620; }
+  .badge-warn { background: #fef3cd; color: #856404; }
+  .badge-crit { background: #f8d7da; color: #721c24; }
+  
+  [data-theme="dark"] .badge-ok { background: #1e3a24; color: #a3e0b0; }
+  [data-theme="dark"] .badge-warn { background: #3d3211; color: #f5d77f; }
+  [data-theme="dark"] .badge-crit { background: #4a1d20; color: #f2a4a8; }
+
+  .tac-list { font-size: 11.5px; line-height: 1.35; color: var(--ink); margin: 0; padding-left: 14px; }
+  .tac-list li { margin-bottom: 2px; }
+  .tac-metric { font-family: var(--mono); font-weight: 600; }
+
+  .approx { font-size: 10.5px; color: var(--ink-faint); margin-top: 1px; }
+
+  /* CSS Анімації погоди */
+  @keyframes spin-sun { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes float-cloud { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+  @keyframes rain-fall { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -12; } }
+  @keyframes fog-drift { 0%, 100% { transform: translateX(-2px); opacity: 0.6; } 50% { transform: translateX(2px); opacity: 0.95; } }
+  @keyframes storm-flash { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; filter: drop-shadow(0 0 2px var(--alert)); } }
+
+  .anim-sun { transform-origin: 24px 24px; animation: spin-sun 22s linear infinite; }
+  .anim-cloud { animation: float-cloud 3.5s ease-in-out infinite; }
+  .anim-rain { stroke-dasharray: 4 4; animation: rain-fall 0.6s linear infinite; }
+  .anim-fog { animation: fog-drift 3s ease-in-out infinite; }
+  .anim-flash { animation: storm-flash 1.2s ease-in-out infinite; }
+
+  /* Мобільна адаптація */
+  @media (max-width: 600px) {
+    .wrap { padding: 14px 12px 40px; }
+    header { text-align: left; }
+    h1 { font-size: 22px; }
+    .subcap { font-size: 12px; margin-bottom: 12px; }
+    .search-box { flex-direction: row; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .search-box input { min-width: 100%; padding: 8px 10px; font-size: 12px; }
+    .search-box button { flex: 1; padding: 8px 10px; font-size: 12px; justify-content: center; text-align: center; }
+    .status-bar { padding: 8px 12px; font-size: 11px; gap: 4px 12px; margin-bottom: 14px; }
+    #refresh-btn { margin-left: 0; width: 100%; margin-top: 4px; padding: 6px 0; }
+    #cards { grid-template-columns: 1fr; gap: 10px; }
+    .card { padding: 12px; gap: 8px; border-radius: 12px; }
+    .card .weekday { font-size: 14px; }
+    .temps .tmax { font-size: 23px; }
+    .temps .tmin { font-size: 15px; }
+    .row { font-size: 11.5px; }
+    .tactical-box { padding: 8px; gap: 4px; }
+    .tactical-hdr { font-size: 10px; }
+    .tac-list { font-size: 11px; padding-left: 12px; }
+  }
+
+  footer {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink-faint);
+  }
+  footer a { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top-row">
+      <p class="eyebrow">Прогноз погоди та метеоумов · 5 днів</p>
+      <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span> <span id="theme-text">Темна</span>
+      </button>
+    </div>
+    <h1 id="loc-title">Степногірськ</h1>
+    <p class="subcap" id="loc-subcap">Запорізька область, Василівський район · <span class="coords">47.5865°пн 35.3580°сх</span></p>
+    
+    <div class="search-box">
+      <input type="text" id="coords-input" placeholder="Введіть координати (напр. 47.6259, 35.5719)" onkeydown="if(event.key==='Enter') handleCoordsSubmit()">
+      <button onclick="handleCoordsSubmit()">Завантажити</button>
+      <button class="btn-geo" onclick="handleGeolocation()" title="Моє місцезнаходження">📍 GPS</button>
+    </div>
+  </header>
+
+  <div class="horizon-rule"></div>
+
+  <div class="status-bar">
+    <span class="status-item">Оновлено: <b id="updated-time">—</b></span>
+    <span class="status-item">Автооновлення: <b id="next-update">—</b></span>
+    <button id="refresh-btn" onclick="loadAndRender()">Оновити зараз</button>
+  </div>
+
+  <div id="state-loading">Завантажую прогноз для обраної локації…</div>
+  <div id="state-error">
+    <b>Не вдалося завантажити дані</b>
+    Перевірте правильність координат або налаштування мережі.
+    <br><button onclick="loadAndRender()" style="margin-top:8px; padding:5px 10px; cursor:pointer;">Спробувати ще раз</button>
+  </div>
+  <div id="cards" style="display:none;"></div>
+
+  <footer>
+    Джерело даних: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> та BigDataCloud.
+    Розрахунок факторів БпЛА та артилерії виконується автономно на основі розширених метеопараметрів.
+  </footer>
+</div>
+
+<script>
+// Перемикач теми
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  updateThemeUI();
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateThemeUI();
+}
+
+function updateThemeUI() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+  document.getElementById('theme-text').textContent = isDark ? 'Світла' : 'Темна';
+}
+
+initTheme();
+
+let currentLocation = {
+  name: "Степногірськ",
+  subtext: "Запорізька область, Василівський район",
+  lat: 47.5865,
+  lon: 35.3580,
+  tz: "Europe/Kyiv"
+};
+
+const REFRESH_MS = 6 * 60 * 60 * 1000;
+let lastFetchTime = null;
+
+const WEEKDAYS = ['неділя','понеділок','вівторок','середа','четвер',"п'ятниця",'субота'];
+const MONTHS = ['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+
+function clamp(v,mn,mx){ return Math.max(mn, Math.min(mx, v)); }
+
+function degToArrow(deg){
+  if (deg===null || deg===undefined || isNaN(deg)) return '—';
+  const to = (deg + 180) % 360;
+  const idx = Math.round(to/45) % 8;
+  const arrows = ['↑','↗','→','↘','↓','↙','←','↖'];
+  return arrows[idx];
+}
+
+function classifyDay(codes, avgCloud){
+  const has = arr => codes.some(c => arr.includes(c));
+  if (has([95,96,99])) return 'гроза';
+  if (has([65,82])) return 'злива';
+  if (has([51,53,55,56,57,61,63,66,67,80,81])) return 'дощ';
+  if (has([45,48])) return 'туман';
+  if (avgCloud < 20) return 'ясно';
+  if (avgCloud < 50) return 'мінлива хмарність';
+  if (avgCloud < 80) return 'хмарно з проясненнями';
+  return 'похмуро';
+}
+
+const TAG_CLASS = {
+  'ясно':'tag-clear', 'мінлива хмарність':'tag-mixed', 'хмарно з проясненнями':'tag-mixed',
+  'похмуро':'tag-cloud', 'дощ':'tag-rain', 'злива':'tag-rain', 'гроза':'tag-storm', 'туман':'tag-fog'
+};
+
+function iconFor(type){
+  const s = 'class="wicon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"';
+  const cloud = `<g class="anim-cloud"><circle cx="17" cy="27" r="7"/><circle cx="26" cy="21" r="9"/><circle cx="34" cy="27" r="6.5"/><rect x="13" y="26" width="27" height="10" rx="5"/></g>`;
+  const sun = `<g class="anim-sun"><circle cx="24" cy="24" r="8"/><line x1="24" y1="4" x2="24" y2="10"/><line x1="24" y1="38" x2="24" y2="44"/><line x1="4" y1="24" x2="10" y2="24"/><line x1="38" y1="24" x2="44" y2="24"/><line x1="10.5" y1="10.5" x2="14.5" y2="14.5"/><line x1="33.5" y1="33.5" x2="37.5" y2="37.5"/><line x1="10.5" y1="37.5" x2="14.5" y2="33.5"/><line x1="33.5" y1="14.5" x2="37.5" y2="10.5"/></g>`;
+  const smallSun = `<g class="anim-sun" style="transform-origin: 12px 13px;"><circle cx="12" cy="13" r="6"/><line x1="12" y1="1" x2="12" y2="4"/><line x1="2" y1="13" x2="5" y2="13"/><line x1="5" y1="6" x2="7.2" y2="8.2"/></g>`;
+  const rainDrops = `<g class="anim-rain"><line x1="18" y1="40" x2="15" y2="46"/><line x1="26" y1="40" x2="23" y2="46"/><line x1="34" y1="40" x2="31" y2="46"/></g>`;
+  const heavyDrops = `<g class="anim-rain"><line x1="14" y1="39" x2="10" y2="46"/><line x1="21" y1="39" x2="17" y2="46"/><line x1="28" y1="39" x2="24" y2="46"/><line x1="35" y1="39" x2="31" y2="46"/></g>`;
+  const fogLines = `<g class="anim-fog"><line x1="10" y1="40" x2="38" y2="40"/><line x1="14" y1="45" x2="34" y2="45"/></g>`;
+  const stormLightning = `<path class="anim-flash" d="M28 37 L22 46 L27 46 L22 55" transform="scale(0.85) translate(4,-4)" fill="var(--alert)"/>`;
+
+  switch(type){
+    case 'ясно': return `<svg ${s}>${sun}</svg>`;
+    case 'мінлива хмарність': return `<svg ${s}>${cloud}${smallSun}</svg>`;
+    case 'хмарно з проясненнями': return `<svg ${s}><g opacity="0.55">${smallSun}</g>${cloud}</svg>`;
+    case 'похмуро': return `<svg ${s}>${cloud}</svg>`;
+    case 'туман': return `<svg ${s}>${cloud}${fogLines}</svg>`;
+    case 'дощ': return `<svg ${s}>${cloud}${rainDrops}</svg>`;
+    case 'злива': return `<svg ${s}>${cloud}${heavyDrops}</svg>`;
+    case 'гроза': return `<svg ${s}>${cloud}${stormLightning}</svg>`;
+    default: return `<svg ${s}>${cloud}</svg>`;
+  }
+}
+
+const SUN_GLYPH = `<svg class="glyph sun-g" viewBox="0 0 16 16"><circle cx="8" cy="8" r="4"/></svg>`;
+
+function fmtTime(iso){
+  if (!iso) return null;
+  const parts = iso.split('T');
+  return parts.length>1 ? parts[1] : null;
+}
+
+function formatDateHuman(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  return { weekday: WEEKDAYS[d.getDay()], human: `${d.getDate()} ${MONTHS[d.getMonth()]}` };
+}
+
+async function reverseGeocode(lat, lon) {
+  try {
+    const resp = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=uk`);
+    if (!resp.ok) throw new Error();
+    const data = await resp.json();
+    
+    const name = data.locality || data.city || data.localityInfo?.administrative?.[3]?.name || data.localityInfo?.administrative?.[2]?.name || "Задані координати";
+    const subParts = [];
+    if (data.principalSubdivision) subParts.push(data.principalSubdivision);
+    if (data.countryName) subParts.push(data.countryName);
+    
+    return { name, subtext: subParts.join(', ') || "Точка на карті" };
+  } catch (err) {
+    return { name: "Заданий район", subtext: "Локація за координатами" };
+  }
+}
+
+async function handleCoordsSubmit() {
+  const input = document.getElementById('coords-input').value.trim();
+  if (!input) return;
+
+  const parts = input.split(/[\s,]+/);
+  if (parts.length < 2) {
+    alert('Введіть координати у форматі: 47.6259, 35.5719');
+    return;
+  }
+
+  const lat = parseFloat(parts[0]);
+  const lon = parseFloat(parts[1]);
+
+  if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    alert('Введено некоректні числові значення координат.');
+    return;
+  }
+
+  const geoData = await reverseGeocode(lat, lon);
+  currentLocation = {
+    name: geoData.name,
+    subtext: geoData.subtext,
+    lat, lon,
+    tz: "Europe/Kyiv"
+  };
+
+  updateHeaderUI();
+  loadAndRender();
+}
+
+function handleGeolocation() {
+  if (!navigator.geolocation) {
+    alert('Геолокація не підтримується вашим браузером.');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    document.getElementById('coords-input').value = `${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+    await handleCoordsSubmit();
+  }, () => {
+    alert('Не вдалося отримати доступ до вашого GPS.');
+  });
+}
+
+function updateHeaderUI() {
+  document.getElementById('loc-title').textContent = currentLocation.name;
+  document.getElementById('loc-subcap').innerHTML = `${currentLocation.subtext} · <span class="coords">${currentLocation.lat.toFixed(4)}°пн ${currentLocation.lon.toFixed(4)}°сх</span>`;
+}
+
+async function fetchWeather(){
+  const base = `https://api.open-meteo.com/v1/forecast?latitude=${currentLocation.lat}&longitude=${currentLocation.lon}&timezone=${encodeURIComponent(currentLocation.tz)}&forecast_days=5&windspeed_unit=ms`;
+  const hourly = 'temperature_2m,dew_point_2m,weather_code,cloud_cover,visibility,wind_speed_10m,wind_gusts_10m,precipitation';
+  const daily = 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,wind_direction_10m_dominant';
+
+  const resp = await fetch(`${base}&hourly=${hourly}&daily=${daily}`);
+  if (!resp.ok) throw new Error('API request failed: '+resp.status);
+  const data = await resp.json();
+  return { data };
+}
+
+function processDays({data}){
+  const dailyTimes = data.daily.time;
+
+  const hTemp = data.hourly.temperature_2m || [];
+  const hDew = data.hourly.dew_point_2m || data.hourly.dewpoint_2m || [];
+  const hCloud = data.hourly.cloud_cover || data.hourly.cloudcover || [];
+  const hVis = data.hourly.visibility || [];
+  const hCode = data.hourly.weather_code || data.hourly.weathercode || [];
+  const hWind = data.hourly.wind_speed_10m || data.hourly.windspeed_10m || [];
+  const hGust = data.hourly.wind_gusts_10m || data.hourly.windgusts_10m || [];
+  const hPrecip = data.hourly.precipitation || [];
+  const dWindDir = data.daily.wind_direction_10m_dominant || data.daily.winddirection_10m_dominant || [];
+
+  return dailyTimes.map((date, i) => {
+    const idxs = [];
+    for (let k=0;k<data.hourly.time.length;k++){ if (data.hourly.time[k].startsWith(date)) idxs.push(k); }
+
+    const temps = idxs.map(k=>hTemp[k] ?? 0);
+    const dews = idxs.map(k=>hDew[k] ?? 0);
+    const clouds = idxs.map(k=>hCloud[k] ?? 0);
+    const vis = idxs.map(k=>hVis[k] ?? 10000);
+    const codes = idxs.map(k=>hCode[k] ?? 0);
+    const winds = idxs.map(k=>hWind[k] ?? 0);
+    const gusts = idxs.map(k=>hGust[k] ?? 0);
+    const precips = idxs.map(k=>hPrecip[k] ?? 0);
+
+    const avgCloud = clouds.length ? clouds.reduce((a,b)=>a+b,0)/clouds.length : 0;
+    const minVis = vis.length ? Math.min(...vis) : 10000;
+
+    let cloudBase = 0;
+    if (temps.length){
+      const maxT = Math.max(...temps);
+      const mi = temps.indexOf(maxT);
+      const spread = Math.max(0, temps[mi]-dews[mi]);
+      cloudBase = Math.max(0, Math.round((125*spread)/50)*50);
+    }
+
+    const fogHours = codes.filter(c=>c===45||c===48).length;
+    let fogProb = clamp(Math.round((2000-minVis)/20), 0, 95);
+    if (fogHours>0) fogProb = Math.max(fogProb, 65);
+
+    const weatherType = classifyDay(codes, avgCloud);
+    const windMin = winds.length ? Math.round(Math.min(...winds)) : 0;
+    const windMax = winds.length ? Math.round(Math.max(...winds)) : 0;
+    const gustMax = gusts.length ? Math.round(Math.max(...gusts)) : 0;
+    const precipTotal = precips.length ? precips.reduce((a,b)=>a+b,0) : 0;
+
+    return {
+      date,
+      weatherType,
+      codes,
+      tMax: Math.round(data.daily.temperature_2m_max[i]),
+      tMin: Math.round(data.daily.temperature_2m_min[i]),
+      windMin, windMax, gustMax, precipTotal,
+      windArrow: degToArrow(dWindDir[i]),
+      sunrise: fmtTime(data.daily.sunrise[i]),
+      sunset: fmtTime(data.daily.sunset[i]),
+      cloudBase, fogProb
+    };
+  });
+}
+
+function calcTactical(day) {
+  let uavStatus = 'ok';
+  let uavStatusText = 'Сприятливі';
+  const uavNotes = [];
+
+  if (day.gustMax >= 14 || day.windMax >= 12) {
+    uavStatus = 'crit';
+    uavNotes.push(`Пориви вітру до <span class="tac-metric">${day.gustMax} м/с</span> — критично для FPV/малих БпЛА.`);
+  } else if (day.gustMax >= 9 || day.windMax >= 7) {
+    if (uavStatus !== 'crit') uavStatus = 'warn';
+    uavNotes.push(`Пориви вітру до <span class="tac-metric">${day.gustMax} м/с</span> — нестабільність польоту, витрата АКБ.`);
+  }
+
+  const rainCodesCrit = [63, 65, 66, 67, 81, 82, 95, 96, 99]; 
+  const rainCodesWarn = [51, 53, 55, 56, 57, 61, 80]; 
+
+  const hasCritRain = day.codes.some(c => rainCodesCrit.includes(c));
+  const hasWarnRain = day.codes.some(c => rainCodesWarn.includes(c)) || day.precipTotal > 0.5;
+
+  if (hasCritRain) {
+    uavStatus = 'crit';
+    uavNotes.push(`Сильні опади / гроза (<span class="tac-metric">${day.precipTotal.toFixed(1)} мм</span>) — замикання, намокання оптики.`);
+  } else if (hasWarnRain) {
+    if (uavStatus !== 'crit') uavStatus = 'warn';
+    uavNotes.push(`Опади / мряка (<span class="tac-metric">${day.precipTotal.toFixed(1)} мм</span>) — запітніння оптики, зволоження плат.`);
+  }
+
+  if (day.cloudBase > 0 && day.cloudBase < 300) {
+    if (uavStatus !== 'crit') uavStatus = 'warn';
+    uavNotes.push(`Низька хмарність (<span class="tac-metric">${day.cloudBase} м</span>) — обмеження оптики розвідки.`);
+  }
+
+  if (day.fogProb >= 60) {
+    uavStatus = 'crit';
+    uavNotes.push(`Високий ризик туману (<span class="tac-metric">${day.fogProb}%</span>) — втрата оптичної видимості.`);
+  }
+
+  if ((day.tMin <= 2 && day.tMax >= -5) && (hasWarnRain || hasCritRain || day.cloudBase < 600)) {
+    uavStatus = 'crit';
+    uavNotes.push(`Загроза обледеніння гвинтів у вологому повітрі.`);
+  }
+
+  if (uavNotes.length === 0) {
+    uavNotes.push('Нормальні умови для розвідувальних та ударних БпЛА.');
+  }
+
+  if (uavStatus === 'warn') uavStatusText = 'Обмежені';
+  if (uavStatus === 'crit') uavStatusText = 'Критичні';
+
+  const artNotes = [];
+  if (day.gustMax >= 10) {
+    artNotes.push(`Пориви вітру до <span class="tac-metric">${day.gustMax} м/с</span> — додаткове розсіювання снарядів.`);
+  } else if (day.windMax >= 6) {
+    artNotes.push(`Вітер <span class="tac-metric">${day.windMin}–${day.windMax} м/с</span> — потребує вітрових поправок.`);
+  } else {
+    artNotes.push(`Вітрове знесення помірне (<span class="tac-metric">≤${day.gustMax} м/с</span>).`);
+  }
+
+  if (hasWarnRain || hasCritRain) {
+    artNotes.push(`Опади (<span class="tac-metric">${day.precipTotal.toFixed(1)} мм</span>) — коригування та зміна щільності.`);
+  }
+
+  const avgTemp = (day.tMax + day.tMin) / 2;
+  const tempDelta = Math.round(avgTemp - 15);
+  if (Math.abs(tempDelta) >= 5) {
+    const sign = tempDelta > 0 ? '+' : '';
+    artNotes.push(`Відхилення T повітря від табличної (15°C): <span class="tac-metric">${sign}${tempDelta}°C</span>.`);
+  }
+
+  return { uavStatus, uavStatusText, uavNotes, artNotes };
+}
+
+function dayCardHTML(day){
+  const { weekday, human } = formatDateHuman(day.date);
+  const tag = TAG_CLASS[day.weatherType] || 'tag-cloud';
+  const tac = calcTactical(day);
+  const uavBadgeClass = tac.uavStatus === 'ok' ? 'badge-ok' : (tac.uavStatus === 'warn' ? 'badge-warn' : 'badge-crit');
+
+  return `
+  <div class="card">
+    <div class="date-row">
+      <span class="weekday">${weekday}</span>
+      <span class="daynum">${human} · ${day.date}</span>
+    </div>
+    <div class="icon-row">
+      ${iconFor(day.weatherType)}
+      <span class="wtype ${tag}">${day.weatherType}</span>
+    </div>
+    <div class="horizon-rule-sm"></div>
+    <div class="temps">
+      <span class="tmax">${day.tMax}°</span>
+      <span class="tmin">${day.tMin}°</span>
+      <span class="deg">T max/min</span>
+    </div>
+    <div class="row">
+      <span class="label">Вітер (пориви)</span>
+      <span class="value"><span class="arrow">${day.windArrow}</span> ${day.windMin}–${day.windMax} м/с <span style="font-size:10.5px; color:var(--ink-soft);">(до ${day.gustMax})</span></span>
+    </div>
+    <div class="astro">
+      <div class="row"><span class="label">${SUN_GLYPH} Схід / захід Сонця</span><span class="value">${day.sunrise||'—'} / ${day.sunset||'—'}</span></div>
+    </div>
+    <div class="horizon-rule-sm"></div>
+    <div class="row"><span class="label">Нижня межа хмар</span><span class="value">≈ ${day.cloudBase} м</span></div>
+    <div>
+      <div class="row"><span class="label">Ймовірність туману</span><span class="value">${day.fogProb}%</span></div>
+      <div class="gauge"><span style="width:${day.fogProb}%"></span></div>
+    </div>
+
+    <div class="tactical-box">
+      <div class="tactical-hdr">
+        <span>Вплив на БпЛА</span>
+        <span class="badge ${uavBadgeClass}">${tac.uavStatusText}</span>
+      </div>
+      <ul class="tac-list">
+        ${tac.uavNotes.map(n => `<li>${n}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="tactical-box">
+      <div class="tactical-hdr">
+        <span>Балістика / Артилерія</span>
+      </div>
+      <ul class="tac-list">
+        ${tac.artNotes.map(n => `<li>${n}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="approx">* розраховано за метеопараметрами моделі</div>
+  </div>`;
+}
+
+function renderDays(days){
+  document.getElementById('cards').innerHTML = days.map(dayCardHTML).join('');
+}
+
+function updateStatusBar(){
+  if (!lastFetchTime) return;
+  const updatedStr = lastFetchTime.toLocaleString('uk-UA', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('updated-time').textContent = updatedStr;
+  const next = new Date(lastFetchTime.getTime()+REFRESH_MS);
+  let diff = next - new Date();
+  if (diff<0) diff=0;
+  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
+  document.getElementById('next-update').textContent = `${h} год ${m} хв`;
+}
+
+async function loadAndRender(){
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  document.getElementById('state-error').style.display = 'none';
+  document.getElementById('state-loading').style.display = 'block';
+  document.getElementById('cards').style.display = 'none';
+  try{
+    const result = await fetchWeather();
+    const days = processDays(result);
+    lastFetchTime = new Date();
+    renderDays(days);
+    updateStatusBar();
+    document.getElementById('state-loading').style.display = 'none';
+    document.getElementById('cards').style.display = 'grid';
+  }catch(err){
+    console.error(err);
+    document.getElementById('state-loading').style.display = 'none';
+    document.getElementById('state-error').style.display = 'block';
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+loadAndRender();
+setInterval(updateStatusBar, 60000);
+setInterval(loadAndRender, REFRESH_MS);
+</script>
+</body>
+</html>
