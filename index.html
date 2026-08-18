@@ -116,7 +116,7 @@
 
   .np-header { display: flex; flex-direction: column; gap: 6px; }
 
-  /* Порядок у шапці: 1 - пошук, 2 - назва, 3 - мети/координати/MGRS */
+  /* Порядок: 1 - пошук, 2 - назва, 3 - область/координати/MGRS */
   .search-row { display: flex; gap: 6px; }
   .search-row input {
     flex: 1;
@@ -287,19 +287,16 @@
     <!-- НП 1 -->
     <div class="np-column">
       <div class="np-header">
-        <!-- 1. Порядок: Рядок введення/пошуку -->
         <div class="search-row">
-          <input type="text" id="input-0" placeholder="Назва, Lat/Lon або MGRS (напр. 36TX...)" onkeydown="if(event.key==='Enter') updateNP(0)">
+          <input type="text" id="input-0" placeholder="Назва, Lat/Lon або MGRS..." onkeydown="if(event.key==='Enter') updateNP(0)">
           <button class="btn btn-main" onclick="updateNP(0)">Ок</button>
           <button class="btn" onclick="getGPS(0)">📍 GPS</button>
         </div>
-        <!-- 2. Порядок: Назва НП -->
-        <h2 class="np-title" id="title-0">1. Степногірськ</h2>
-        <!-- 3. Порядок: Область/район, WGS84 та MGRS -->
+        <h2 class="np-title" id="title-0">1. Веселянка</h2>
         <div class="np-meta">
-          <span id="meta-0">Василівський р-н</span> · 
-          <span class="np-coords" id="coords-0">47.5865°пн 35.3580°сх</span> · 
-          <span class="mgrs-tag" id="mgrs-0">36T XT 7696 6950</span>
+          <span id="meta-0">Запорізький р-н</span> · 
+          <span class="np-coords" id="coords-0">47.6836°пн 35.3735°сх</span> · 
+          <span class="mgrs-tag" id="mgrs-0">36T XT 7815 8027</span>
         </div>
       </div>
       <div class="days-list" id="grid-0">
@@ -310,19 +307,16 @@
     <!-- НП 2 -->
     <div class="np-column">
       <div class="np-header">
-        <!-- 1 -->
         <div class="search-row">
-          <input type="text" id="input-1" placeholder="Назва, Lat/Lon або MGRS (напр. 36TX...)" onkeydown="if(event.key==='Enter') updateNP(1)">
+          <input type="text" id="input-1" placeholder="Назва, Lat/Lon або MGRS..." onkeydown="if(event.key==='Enter') updateNP(1)">
           <button class="btn btn-main" onclick="updateNP(1)">Ок</button>
           <button class="btn" onclick="getGPS(1)">📍 GPS</button>
         </div>
-        <!-- 2 -->
-        <h2 class="np-title" id="title-1">2. Оріхів</h2>
-        <!-- 3 -->
+        <h2 class="np-title" id="title-1">2. Степногірськ</h2>
         <div class="np-meta">
-          <span id="meta-1">Пологівський р-н</span> · 
-          <span class="np-coords" id="coords-1">47.5683°пн 35.7833°сх</span> · 
-          <span class="mgrs-tag" id="mgrs-1">36T YT 0895 6770</span>
+          <span id="meta-1">Василівський р-н</span> · 
+          <span class="np-coords" id="coords-1">47.5887°пн 35.3610°сх</span> · 
+          <span class="mgrs-tag" id="mgrs-1">36T XT 7718 6974</span>
         </div>
       </div>
       <div class="days-list" id="grid-1">
@@ -333,19 +327,16 @@
     <!-- НП 3 -->
     <div class="np-column">
       <div class="np-header">
-        <!-- 1 -->
         <div class="search-row">
-          <input type="text" id="input-2" placeholder="Назва, Lat/Lon або MGRS (напр. 36TX...)" onkeydown="if(event.key==='Enter') updateNP(2)">
+          <input type="text" id="input-2" placeholder="Назва, Lat/Lon або MGRS..." onkeydown="if(event.key==='Enter') updateNP(2)">
           <button class="btn btn-main" onclick="updateNP(2)">Ок</button>
           <button class="btn" onclick="getGPS(2)">📍 GPS</button>
         </div>
-        <!-- 2 -->
-        <h2 class="np-title" id="title-2">3. Гуляйполе</h2>
-        <!-- 3 -->
+        <h2 class="np-title" id="title-2">3. Плавні</h2>
         <div class="np-meta">
-          <span id="meta-2">Пологівський р-н</span> · 
-          <span class="np-coords" id="coords-2">47.6583°пн 36.2583°сх</span> · 
-          <span class="mgrs-tag" id="mgrs-2">36T YT 4438 7808</span>
+          <span id="meta-2">Василівський р-н</span> · 
+          <span class="np-coords" id="coords-2">47.4973°пн 35.3770°сх</span> · 
+          <span class="mgrs-tag" id="mgrs-2">36T XT 7832 5959</span>
         </div>
       </div>
       <div class="days-list" id="grid-2">
@@ -358,10 +349,11 @@
 </div>
 
 <script>
+// Встановлено точні початкові координати для трьох населених пунктів
 const locations = [
-  { name: "Степногірськ", lat: 47.5865, lon: 35.3580 },
-  { name: "Оріхів", lat: 47.5683, lon: 35.7833 },
-  { name: "Гуляйполе", lat: 47.6583, lon: 36.2583 }
+  { name: "Веселянка", lat: 47.683637776894514, lon: 35.37350647234079 },
+  { name: "Степногірськ", lat: 47.58869248224713, lon: 35.36095708780877 },
+  { name: "Плавні", lat: 47.49734098683361, lon: 35.37704897884673 }
 ];
 
 const WEEKDAYS = ['Неділя','Понеділок','Вівторок','Середа','Четвер','П\'ятниця','Субота'];
@@ -690,7 +682,7 @@ function renderCards(data) {
     } else if (maxGust >= 9 || totalPrecip > 0.8 || cloudBase < 500) {
       uavTag = 'ОБМЕЖЕНІ';
       tagClass = 'status-warn';
-      uavNote = `Пориви до ${maxGust} м/с — знесення апарата.`;
+      uavNote = `Пориви до ${maxGust} м/с — знесення борту.`; // Виправлено формулювання
     }
 
     return `
@@ -765,6 +757,14 @@ async function loadNP(idx) {
   
   updateHeaderInfo(idx);
   
+  // Автоматичне уточнення назви та району за географічними координатами
+  reverseGeocode(loc.lat, loc.lon).then(geo => {
+    if (geo && geo.name) {
+      document.getElementById(`title-${idx}`).textContent = `${idx + 1}. ${geo.name}`;
+      document.getElementById(`meta-${idx}`).textContent = geo.region ? `${geo.region}` : '';
+    }
+  });
+
   try {
     const raw = await fetchWeather(loc.lat, loc.lon);
     gridEl.innerHTML = renderCards(raw);
@@ -777,7 +777,7 @@ async function updateNP(idx) {
   const val = document.getElementById(`input-${idx}`).value.trim();
   if (!val) return;
 
-  // 1. Спроба розпізнати як MGRS
+  // 1. Спроба розпізнати MGRS
   const mgrsLoc = mgrsToLatLon(val);
   if (mgrsLoc) {
     locations[idx].lat = mgrsLoc.lat;
@@ -793,7 +793,7 @@ async function updateNP(idx) {
     return;
   }
 
-  // 2. Спроба розпізнати як Lat, Lon (десяткові)
+  // 2. Спроба розпізнати десяткові координати (Lat, Lon)
   const parts = val.split(/[\s,]+/);
   if (parts.length >= 2) {
     const lat = parseFloat(parts[0]);
