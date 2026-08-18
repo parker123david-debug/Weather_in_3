@@ -52,7 +52,9 @@
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
   }
-  .wrap { max-width: 1400px; margin: 0 auto; padding: 24px 20px 60px; }
+  
+  /* Збільшено ширину контейнера на 20% для більшої ширини карток */
+  .wrap { max-width: 1680px; margin: 0 auto; padding: 24px 20px 60px; }
 
   header { padding-top: 4px; }
   .top-row {
@@ -194,25 +196,25 @@
   #cards {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
+    gap: 14px;
   }
   .card {
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 14px 12px;
+    padding: 16px 14px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
   }
   .card .date-row { display: flex; align-items: baseline; justify-content: space-between; }
-  .card .weekday { font-family: var(--display); font-weight: 600; font-size: 14.5px; text-transform: capitalize; }
-  .card .daynum { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); }
+  .card .weekday { font-family: var(--display); font-weight: 600; font-size: 15px; text-transform: capitalize; }
+  .card .daynum { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
 
   .icon-row { display: flex; align-items: center; gap: 8px; }
-  .wicon { width: 38px; height: 38px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .wtype { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
+  .wicon { width: 40px; height: 40px; flex-shrink: 0; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .wtype { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--ink-soft); color: #fff; }
   .tag-clear { background: var(--sun); }
   .tag-mixed { background: #8a8f76; }
   .tag-cloud { background: var(--ink-soft); }
@@ -223,11 +225,11 @@
   .horizon-rule-sm { height: 1px; background: var(--line); }
 
   .temps { display: flex; align-items: baseline; gap: 6px; }
-  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 24px; }
-  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 16px; color: var(--ink-soft); }
-  .temps .deg { font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+  .temps .tmax { font-family: var(--display); font-weight: 700; font-size: 25px; }
+  .temps .tmin { font-family: var(--display); font-weight: 500; font-size: 16.5px; color: var(--ink-soft); }
+  .temps .deg { font-size: 12.5px; font-weight: 500; color: var(--ink-soft); }
 
-  .row { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; }
+  .row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
   .row .label { color: var(--ink-soft); display: flex; align-items: center; gap: 4px; }
   .row .value { font-family: var(--mono); font-weight: 500; text-align: right; }
   .arrow { font-size: 14px; display: inline-block; color: var(--wind); }
@@ -244,7 +246,7 @@
     background: var(--tactical-bg);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 8px;
+    padding: 8px 9px;
     margin-top: 2px;
     display: flex;
     flex-direction: column;
@@ -270,7 +272,7 @@
   [data-theme="dark"] .badge-warn { background: #3d3211; color: #f5d77f; }
   [data-theme="dark"] .badge-crit { background: #4a1d20; color: #f2a4a8; }
 
-  .tac-list { font-size: 11px; line-height: 1.35; color: var(--ink); margin: 0; padding-left: 12px; }
+  .tac-list { font-size: 11.5px; line-height: 1.35; color: var(--ink); margin: 0; padding-left: 12px; }
   .tac-list li { margin-bottom: 2px; }
   .tac-metric { font-family: var(--mono); font-weight: 600; }
 
@@ -290,7 +292,7 @@
   .anim-flash { animation: storm-flash 1.2s ease-in-out infinite; }
 
   /* Адаптація для планшетів */
-  @media (max-width: 1180px) {
+  @media (max-width: 1280px) {
     #cards { grid-template-columns: repeat(3, 1fr); }
   }
 
@@ -468,9 +470,15 @@ function fmtTime(iso){
   return parts.length>1 ? parts[1] : null;
 }
 
+// Форматування дати у вигляд ДД.ММ.РРРР
 function formatDateHuman(dateStr){
+  const [yyyy, mm, dd] = dateStr.split('-');
   const d = new Date(dateStr+'T00:00:00');
-  return { weekday: WEEKDAYS[d.getDay()], human: `${d.getDate()} ${MONTHS[d.getMonth()]}` };
+  return { 
+    weekday: WEEKDAYS[d.getDay()], 
+    human: `${d.getDate()} ${MONTHS[d.getMonth()]}`,
+    formattedDate: `${dd}.${mm}.${yyyy}`
+  };
 }
 
 async function reverseGeocode(lat, lon) {
@@ -686,7 +694,7 @@ function calcTactical(day) {
 }
 
 function dayCardHTML(day){
-  const { weekday, human } = formatDateHuman(day.date);
+  const { weekday, human, formattedDate } = formatDateHuman(day.date);
   const tag = TAG_CLASS[day.weatherType] || 'tag-cloud';
   const tac = calcTactical(day);
   const uavBadgeClass = tac.uavStatus === 'ok' ? 'badge-ok' : (tac.uavStatus === 'warn' ? 'badge-warn' : 'badge-crit');
@@ -695,7 +703,7 @@ function dayCardHTML(day){
   <div class="card">
     <div class="date-row">
       <span class="weekday">${weekday}</span>
-      <span class="daynum">${human} · ${day.date}</span>
+      <span class="daynum">${human} · ${formattedDate}</span>
     </div>
     <div class="icon-row">
       ${iconFor(day.weatherType)}
@@ -748,10 +756,18 @@ function renderDays(days){
   document.getElementById('cards').innerHTML = days.map(dayCardHTML).join('');
 }
 
+// Оновлення часу за стандартом НАТО: ЧЧ.ХХ ДД.ММ.РРРР (наприклад: 10.06 18.08.2026)
 function updateStatusBar(){
   if (!lastFetchTime) return;
-  const updatedStr = lastFetchTime.toLocaleString('uk-UA', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-  document.getElementById('updated-time').textContent = updatedStr;
+  const hh = String(lastFetchTime.getHours()).padStart(2, '0');
+  const mm = String(lastFetchTime.getMinutes()).padStart(2, '0');
+  const dd = String(lastFetchTime.getDate()).padStart(2, '0');
+  const mo = String(lastFetchTime.getMonth() + 1).padStart(2, '0');
+  const yyyy = lastFetchTime.getFullYear();
+
+  const natoTimeStr = `${hh}.${mm} ${dd}.${mo}.${yyyy}`;
+  document.getElementById('updated-time').textContent = natoTimeStr;
+  
   const next = new Date(lastFetchTime.getTime()+REFRESH_MS);
   let diff = next - new Date();
   if (diff<0) diff=0;
