@@ -65,7 +65,7 @@
     padding: 14px;
   }
 
-  /* Контейнер тепер розширюється на всю ширину екрана */
+  /* На всю ширину вікна */
   .app-container { 
     width: 100%; 
     max-width: 100%; 
@@ -87,7 +87,6 @@
     gap: 10px;
   }
   .top-title { font-family: var(--mono); font-size: 1.07rem; font-weight: 700; text-transform: uppercase; color: var(--ink-soft); margin: 0; }
-  .top-controls { display: flex; gap: 8px; flex-wrap: wrap; }
 
   .btn {
     font-family: var(--sans);
@@ -97,46 +96,55 @@
     color: var(--ink);
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 6px 12px;
+    padding: 5px 10px;
     cursor: pointer;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 4px;
+    justify-content: center;
   }
   .btn:hover { opacity: 0.85; }
   .btn-main { background: var(--ink); color: var(--bg); border: none; }
-  .btn-danger { color: var(--danger); border-color: var(--danger); background: transparent; }
-  .btn-danger:hover { background: var(--danger-bg); }
+  .btn-action { color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); }
+  .btn-del { color: var(--danger); border-color: transparent; padding: 5px; font-size: 1rem; background: transparent;}
+  .btn-del:hover { background: var(--danger-bg); border-color: var(--danger); }
 
-  /* Картка одного НП (займає 100% ширини) */
+  /* Сітка НП */
+  .np-row-grid {
+    display: grid;
+    gap: 14px;
+    align-items: start;
+    width: 100%;
+    overflow-x: auto; /* Дозволяє скролити, якщо карток забагато */
+    padding-bottom: 5px;
+  }
+
   .np-column {
     background: var(--panel-bg);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 14px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    width: 100%;
+    gap: 10px;
+    min-width: 400px; /* Запобігає надмірному звуженню стовпчика */
   }
 
-  .np-header { display: flex; flex-direction: column; gap: 8px; }
-  .np-header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .np-header { display: flex; flex-direction: column; gap: 6px; }
 
-  .search-row { display: flex; gap: 6px; max-width: 600px; width: 100%; }
+  .search-row { display: flex; gap: 6px; }
   .search-row input {
     flex: 1;
     background: var(--card-bg);
     border: 1px solid var(--line);
     color: var(--ink);
-    padding: 6px 10px;
+    padding: 6px 9px;
     border-radius: 6px;
     font-family: var(--mono);
     font-size: 0.85rem;
     outline: none;
   }
 
-  .np-title { font-family: var(--display); font-size: 1.7rem; font-weight: 700; margin: 0; }
+  .np-title { font-family: var(--display); font-size: 1.7rem; font-weight: 700; margin: 2px 0 0 0; }
   
   .np-meta { 
     font-size: 0.85rem; 
@@ -165,37 +173,40 @@
     border-color: rgba(2, 132, 199, 0.3);
   }
 
-  /* Сітка для 5 днів (горизонтальна розкладка) */
-  .days-list { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-    gap: 12px; 
-  }
+  .days-list { display: flex; flex-direction: column; gap: 10px; }
 
   /* КАРТКА ПРОГНОЗУ */
   .card {
     background: var(--card-bg);
     border: 1px solid var(--line);
     border-radius: 8px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
+    align-items: stretch;
+  }
+
+  @media (max-width: 600px) {
+    .card { grid-template-columns: 1fr; }
   }
 
   .card-left {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 12px;
+    border-right: 1px solid var(--line);
+    padding-right: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .card-left { border-right: none; padding-right: 0; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
   }
 
   .card-right {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex: 1;
     justify-content: space-between;
   }
 
@@ -223,10 +234,8 @@
   .t-max { font-family: var(--display); font-weight: 700; font-size: 2rem; }
   .t-min { font-family: var(--display); font-weight: 500; font-size: 1.23rem; color: var(--ink-soft); }
 
-  .metrics-list { display: flex; flex-direction: column; gap: 4px; font-size: 0.92rem; }
-  .m-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 2px; }
-  [data-theme="light"] .m-row { border-bottom: 1px dashed rgba(0,0,0,0.05); }
-  .m-row:last-child { border-bottom: none; }
+  .metrics-list { display: flex; flex-direction: column; gap: 3px; font-size: 0.92rem; }
+  .m-row { display: flex; justify-content: space-between; align-items: center; }
   .m-row .lbl { color: var(--ink-soft); }
   .m-row .val { font-family: var(--mono); font-weight: 500; }
 
@@ -238,6 +247,7 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 1;
   }
   .tac-head { display: flex; justify-content: space-between; align-items: center; }
   .tac-title { font-family: var(--mono); font-size: 0.77rem; font-weight: 700; text-transform: uppercase; color: var(--ink-soft); }
@@ -261,7 +271,7 @@
   .time-tag-good { color: var(--ok); font-weight: 700; font-family: var(--mono); }
   .time-tag-bad { color: var(--danger); font-weight: 700; font-family: var(--mono); }
 
-  .weather-icon { width: 36px; height: 36px; display: inline-block; }
+  .weather-icon { width: 32px; height: 32px; display: inline-block; }
   
   @keyframes spin { 100% { transform: rotate(360deg); } }
   @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
@@ -274,16 +284,17 @@
   .anim-drop-2 { animation: rain 0.8s linear infinite 0.3s; }
   .anim-bolt { animation: flash 1.2s ease-in-out infinite; }
 
-  .loading-msg { grid-column: 1 / -1; text-align: center; padding: 20px; font-family: var(--mono); color: var(--ink-soft); }
+  .loading-msg { text-align: center; padding: 20px; font-family: var(--mono); color: var(--ink-soft); }
 </style>
 </head>
 <body>
 
 <div class="app-container">
+
   <header class="top-bar">
-    <p class="top-title">Тактичний Метео-Монітор</p>
-    <div class="top-controls">
-      <button class="btn btn-main" onclick="addLocation()">➕ Додати НП</button>
+    <p class="top-title">Тактичний Метео-Монітор · Часові Вікна БпЛА</p>
+    <div style="display:flex; gap:8px; flex-wrap: wrap;">
+      <button class="btn btn-action" onclick="addNP()">➕ Додати НП</button>
       <button class="btn" onclick="changeFontSize(-1)">A-</button>
       <button class="btn" onclick="changeFontSize(1)">A+</button>
       <button class="btn" onclick="loadAllNP()">🔄 Оновити всі</button>
@@ -291,20 +302,21 @@
     </div>
   </header>
 
-  <!-- Контейнер для всіх НП -->
-  <div id="locations-container" style="display: flex; flex-direction: column; gap: 14px;"></div>
+  <!-- Динамічна сітка -->
+  <div class="np-row-grid" id="main-grid"></div>
+
 </div>
 
 <script>
 // Динамічний масив НП
 let locations = [
-  { id: 'loc_1', name: "Веселянка", lat: 47.6836, lon: 35.3735 },
-  { id: 'loc_2', name: "Степногірськ", lat: 47.5887, lon: 35.3610 },
-  { id: 'loc_3', name: "Плавні", lat: 47.4973, lon: 35.3770 }
+  { name: "Веселянка", lat: 47.683637776894514, lon: 35.37350647234079, region: "Запорізький р-н", cachedHTML: null },
+  { name: "Степногірськ", lat: 47.58869248224713, lon: 35.36095708780877, region: "Василівський р-н", cachedHTML: null },
+  { name: "Плавні", lat: 47.49734098683361, lon: 35.37704897884673, region: "Василівський р-н", cachedHTML: null }
 ];
 
 const WEEKDAYS = ['Неділя','Понеділок','Вівторок','Середа','Четвер','П\'ятниця','Субота'];
-const MONTHS = ['серп','вер','жовт','лист','груд','січ','лют','бер','квіт','трав','черв','лип'];
+const MONTHS = ['серп','вер','жовт','лист','груд','січ','лют'];
 
 let currentZoom = 1;
 function changeFontSize(step) {
@@ -325,17 +337,22 @@ function degToArrow(deg) {
   return dirs[Math.round(((deg + 180) % 360) / 45) % 8];
 }
 
+/* ==================== ДОПОМІЖНА ФУНКЦІЯ ГРУПУВАННЯ ГОДИН ==================== */
 function groupContinuousHours(hourIndices, hourlyTimeList) {
   if (!hourIndices || hourIndices.length === 0) return "—";
+  
   const hours = hourIndices.map(k => parseInt(hourlyTimeList[k].split('T')[1].split(':')[0], 10));
   let ranges = [];
-  let start = hours[0], prev = hours[0];
+  let start = hours[0];
+  let prev = hours[0];
 
   for (let i = 1; i < hours.length; i++) {
-    if (hours[i] === prev + 1) prev = hours[i];
-    else {
+    if (hours[i] === prev + 1) {
+      prev = hours[i];
+    } else {
       ranges.push(formatHourRange(start, prev + 1));
-      start = hours[i]; prev = hours[i];
+      start = hours[i];
+      prev = hours[i];
     }
   }
   ranges.push(formatHourRange(start, prev + 1));
@@ -354,125 +371,140 @@ function latLonToMGRS(lat, lon, digits = 4) {
   const a = 6378137.0; const f = 1 / 298.257223563; const k0 = 0.9996;
   const e2 = 2 * f - f * f; const e2prime = e2 / (1 - e2);
   const radLat = lat * Math.PI / 180; const radLon = lon * Math.PI / 180;
-
   let zoneNum = Math.floor((lon + 180) / 6) + 1;
   if (lat >= 56.0 && lat < 64.0 && lon >= 3.0 && lon < 12.0) zoneNum = 32;
-
   const lon0 = ((zoneNum - 1) * 6 - 180 + 3) * Math.PI / 180;
   const N = a / Math.sqrt(1 - e2 * Math.sin(radLat) * Math.sin(radLat));
   const T = Math.tan(radLat) * Math.tan(radLat);
   const C = e2prime * Math.cos(radLat) * Math.cos(radLat);
   const A = Math.cos(radLat) * (radLon - lon0);
   const M = a * ((1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256) * radLat - (3*e2/8 + 3*e2*e2/32 + 45*e2*e2*e2/1024) * Math.sin(2*radLat) + (15*e2*e2/256 + 45*e2*e2*e2/1024) * Math.sin(4*radLat) - (35*e2*e2*e2/3072) * Math.sin(6*radLat));
-
   let easting = k0 * N * (A + (1 - T + C) * A*A*A / 6 + (5 - 18*T + T*T + 72*C - 58*e2prime) * A*A*A*A*A / 120) + 500000.0;
   let northing = k0 * (M + N * Math.tan(radLat) * (A*A / 2 + (5 - T + 9*C + 4*C*C) * A*A*A*A / 24 + (61 - 58*T + T*T + 600*C - 330*e2prime) * A*A*A*A*A*A / 720));
   if (lat < 0) northing += 10000000.0;
-
   const bands = "CDEFGHJKLMNPQRSTUVWXX";
-  let bandIdx = Math.max(0, Math.min(19, Math.floor((lat + 80) / 8)));
+  let bandIdx = Math.floor((lat + 80) / 8);
+  if (bandIdx < 0) bandIdx = 0; if (bandIdx > 19) bandIdx = 19;
   const latBand = bands[bandIdx];
-
   const colSets = [['A','B','C','D','E','F','G','H'],['J','K','L','M','N','P','Q','R'],['S','T','U','V','W','X','Y','Z']];
   const rowArray = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V'];
-  const colChar = colSets[(zoneNum - 1) % 3][Math.floor(easting / 100000) - 1] || '?';
+  const setIdx = (zoneNum - 1) % 3; const colIdx = Math.floor(easting / 100000) - 1;
+  const colChar = colSets[setIdx][colIdx] || '?';
   let rowVal = Math.floor((northing % 2000000) / 100000);
   if (zoneNum % 2 === 0) rowVal = (rowVal + 5) % 20;
-  
-  const eStr = String(Math.floor(easting % 100000)).padStart(5, '0').substring(0, digits);
-  const nStr = String(Math.floor(northing % 100000)).padStart(5, '0').substring(0, digits);
-
-  return `${zoneNum}${latBand} ${colChar}${rowArray[rowVal]||'?'} ${eStr} ${nStr}`;
+  const rowChar = rowArray[rowVal] || '?';
+  const e100k = Math.floor(easting % 100000); const n100k = Math.floor(northing % 100000);
+  const eStr = String(e100k).padStart(5, '0').substring(0, digits);
+  const nStr = String(n100k).padStart(5, '0').substring(0, digits);
+  return `${zoneNum}${latBand} ${colChar}${rowChar} ${eStr} ${nStr}`;
 }
 
 function mgrsToLatLon(mgrsStr) {
-  const match = mgrsStr.replace(/\s+/g, '').toUpperCase().match(/^(\d{1,2})([C-HJ-NP-X])([A-HJ-NP-Z])([A-HJ-NP-V])(\d+)$/);
-  if (!match || match[5].length % 2 !== 0) return null;
-  
-  const zone = parseInt(match[1], 10), latB = match[2], col = match[3], row = match[4], digits = match[5];
-  const h = digits.length / 2, scale = Math.pow(10, 5 - h);
-  const e100k = parseInt(digits.substring(0, h), 10) * scale + (scale / 2);
-  const n100k = parseInt(digits.substring(h), 10) * scale + (scale / 2);
-
+  const clean = mgrsStr.replace(/\s+/g, '').toUpperCase();
+  const match = clean.match(/^(\d{1,2})([C-HJ-NP-X])([A-HJ-NP-Z])([A-HJ-NP-V])(\d+)$/);
+  if (!match) return null;
+  const zoneNum = parseInt(match[1], 10);
+  const latBand = match[2];
+  const digits = match[5];
+  if (digits.length % 2 !== 0) return null;
+  const halfLen = digits.length / 2;
+  let e100k = parseInt(digits.substring(0, halfLen), 10);
+  let n100k = parseInt(digits.substring(halfLen), 10);
+  const scale = Math.pow(10, 5 - halfLen);
+  e100k = e100k * scale + (scale / 2); n100k = n100k * scale + (scale / 2);
   const colSets = [['A','B','C','D','E','F','G','H'],['J','K','L','M','N','P','Q','R'],['S','T','U','V','W','X','Y','Z']];
-  const colIdx = colSets[(zone - 1) % 3].indexOf(col);
+  const setIdx = (zoneNum - 1) % 3; const colIdx = colSets[setIdx].indexOf(match[3]);
   if (colIdx === -1) return null;
   const easting = (colIdx + 1) * 100000 + e100k;
-
-  const rowArr = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V'];
-  let rowIdx = rowArr.indexOf(row);
+  const rowArray = ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V'];
+  let rowIdx = rowArray.indexOf(match[4]);
   if (rowIdx === -1) return null;
-  if (zone % 2 === 0) rowIdx = (rowIdx - 5 + 20) % 20;
-
-  const minN = Math.max(0, (((("CDEFGHJKLMNPQRSTUVWXX".indexOf(latB) * 8) - 80 + 4) / 90.0) * 10000000) - 1000000);
-  let northing = Math.floor(minN / 2000000) * 2000000 + rowIdx * 100000 + n100k;
-  while (northing < minN) northing += 2000000;
-
-  return utmToLatLon(easting, northing, zone, latB >= 'N');
+  if (zoneNum % 2 === 0) rowIdx = (rowIdx - 5 + 20) % 20;
+  const bands = "CDEFGHJKLMNPQRSTUVWXX";
+  const bandIdx = bands.indexOf(latBand);
+  const approxLat = (bandIdx * 8) - 80 + 4;
+  const approxNorthing = (approxLat / 90.0) * 10000000;
+  const minNorthing = Math.max(0, approxNorthing - 1000000);
+  let northing = Math.floor(minNorthing / 2000000) * 2000000 + rowIdx * 100000 + n100k;
+  while (northing < minNorthing) northing += 2000000;
+  return utmToLatLon(easting, northing, zoneNum, latBand >= 'N');
 }
 
-function utmToLatLon(e, n, z, nHemi) {
-  const a = 6378137.0, e2 = 0.006694380004260827, e2p = e2 / (1 - e2);
-  let y = nHemi ? n : n - 10000000.0, x = e - 500000.0;
-  const mu = (y / 0.9996) / (a * (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256));
+function utmToLatLon(easting, northing, zoneNum, northernHemi) {
+  const k0 = 0.9996; const a = 6378137.0; const f = 1 / 298.257223563;
+  const e2 = 2 * f - f * f; const e2prime = e2 / (1 - e2);
+  let x = easting - 500000.0; let y = northing; if (!northernHemi) y -= 10000000.0;
+  const lon0 = ((zoneNum - 1) * 6 - 180 + 3) * Math.PI / 180;
+  const M = y / k0; const mu = M / (a * (1 - e2/4 - 3*e2*e2/64 - 5*e2*e2*e2/256));
   const e1 = (1 - Math.sqrt(1 - e2)) / (1 + Math.sqrt(1 - e2));
-  const p1 = mu + (3*e1/2 - 27*e1*e1*e1/32)*Math.sin(2*mu) + (21*e1*e1/16 - 55*Math.pow(e1,4)/32)*Math.sin(4*mu) + (151*e1*e1*e1/96)*Math.sin(6*mu);
-  const N1 = a / Math.sqrt(1 - e2 * Math.sin(p1) * Math.sin(p1));
-  const T1 = Math.tan(p1) * Math.tan(p1), C1 = e2p * Math.cos(p1) * Math.cos(p1);
-  const R1 = a * (1 - e2) / Math.pow(1 - e2 * Math.sin(p1) * Math.sin(p1), 1.5);
-  const D = x / (N1 * 0.9996);
-  
-  const lat = p1 - (N1 * Math.tan(p1) / R1) * (D*D/2 - (5 + 3*T1 + 10*C1 - 4*C1*C1 - 9*e2p) * Math.pow(D,4) / 24 + (61 + 90*T1 + 298*C1 + 45*T1*T1 - 252*e2p - 3*C1*C1) * Math.pow(D,6) / 720);
-  const lon = (((z - 1) * 6 - 180 + 3) * Math.PI / 180) + (D - (1 + 2*T1 + C1) * Math.pow(D,3) / 6 + (5 - 2*C1 + 28*T1 - 3*C1*C1 + 8*e2p + 24*T1*T1) * Math.pow(D,5) / 120) / Math.cos(p1);
+  const phi1 = mu + (3*e1/2 - 27*e1*e1*e1/32) * Math.sin(2*mu) + (21*e1*e1/16 - 55*e1*e1*e1*e1/32) * Math.sin(4*mu) + (151*e1*e1*e1/96) * Math.sin(6*mu) + (1097*e1*e1*e1*e1/512) * Math.sin(8*mu);
+  const N1 = a / Math.sqrt(1 - e2 * Math.sin(phi1) * Math.sin(phi1));
+  const T1 = Math.tan(phi1) * Math.tan(phi1);
+  const C1 = e2prime * Math.cos(phi1) * Math.cos(phi1);
+  const R1 = a * (1 - e2) / Math.pow(1 - e2 * Math.sin(phi1) * Math.sin(phi1), 1.5);
+  const D = x / (N1 * k0);
+  let lat = phi1 - (N1 * Math.tan(phi1) / R1) * (D*D/2 - (5 + 3*T1 + 10*C1 - 4*C1*C1 - 9*e2prime) * D*D*D*D / 24 + (61 + 90*T1 + 298*C1 + 45*T1*T1 - 252*e2prime - 3*C1*C1) * D*D*D*D*D*D / 720);
+  let lon = lon0 + (D - (1 + 2*T1 + C1) * D*D*D / 6 + (5 - 2*C1 + 28*T1 - 3*C1*C1 + 8*e2prime + 24*T1*T1) * D*D*D*D*D / 120) / Math.cos(phi1);
   return { lat: lat * 180 / Math.PI, lon: lon * 180 / Math.PI };
 }
 
-/* ==================== API ==================== */
+/* ==================== GEOCODING & API ==================== */
 async function reverseGeocode(lat, lon) {
   try {
-    let res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=uk`);
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=uk`);
     if (res.ok) {
-      let d = await res.json();
-      let name = d.address?.village || d.address?.town || d.address?.city || d.address?.hamlet || d.name;
-      if (name) return { name, region: d.address?.county || d.address?.state || "" };
+      const data = await res.json();
+      const addr = data.address || {};
+      const name = addr.village || addr.town || addr.city || addr.hamlet || addr.suburb || addr.municipality || data.name;
+      const region = addr.county || addr.state || "";
+      if (name) return { name, region };
     }
-  } catch(e) {}
+  } catch (e) {}
   try {
-    let res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=uk`);
+    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=uk`);
     if (res.ok) {
-      let d = await res.json();
-      if (d.locality || d.city) return { name: d.locality || d.city, region: d.principalSubdivision || "" };
+      const data = await res.json();
+      const name = data.locality || data.city;
+      const region = data.principalSubdivision || "";
+      if (name) return { name, region };
     }
-  } catch(e) {}
+  } catch (e) {}
   return { name: `НП (${lat.toFixed(2)}, ${lon.toFixed(2)})`, region: "" };
 }
 
-async function forwardGeocode(q) {
+async function forwardGeocode(query) {
   try {
-    let res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1&language=uk&format=json`);
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=uk&format=json`);
     if (res.ok) {
-      let d = await res.json();
-      if (d.results?.[0]) return { lat: d.results[0].latitude, lon: d.results[0].longitude, name: d.results[0].name, region: d.results[0].admin1 || "" };
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        const item = data.results[0];
+        return { lat: item.latitude, lon: item.longitude, name: item.name, region: item.admin1 || item.admin2 || "" };
+      }
     }
-  } catch(e) {}
+  } catch (e) {}
   return null;
 }
 
 function getWeatherIcon(type) {
-  if (type === 'thunder') return `<svg class="weather-icon" viewBox="0 0 40 40"><path class="anim-cloud" fill="#607d8b" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/><polygon class="anim-bolt" fill="#f59e0b" points="19,20 14,28 18,28 16,36 24,25 20,25"/></svg>`;
-  if (type === 'rain') return `<svg class="weather-icon" viewBox="0 0 40 40"><path class="anim-cloud" fill="#78909c" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/><line class="anim-drop-1" x1="16" y1="23" x2="14" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/><line class="anim-drop-2" x1="24" y1="23" x2="22" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/></svg>`;
-  if (type === 'cloudy') return `<svg class="weather-icon" viewBox="0 0 40 40"><path class="anim-cloud" fill="#90a4ae" d="M9,22 Q9,15 16,15 Q18,10 25,12 Q30,11 31,17 Q35,18 34,22 Z"/></svg>`;
-  return `<svg class="weather-icon" viewBox="0 0 40 40"><g class="anim-sun-rays" stroke="#d97706" stroke-width="2"><line x1="20" y1="4" x2="20" y2="8"/><line x1="20" y1="32" x2="20" y2="36"/><line x1="4" y1="20" x2="8" y2="20"/><line x1="32" y1="20" x2="36" y2="20"/><line x1="8.7" y1="8.7" x2="11.5" y2="11.5"/><line x1="28.5" y1="28.5" x2="31.3" y2="31.3"/><line x1="8.7" y1="31.3" x2="11.5" y2="28.5"/><line x1="28.5" y1="11.5" x2="31.3" y2="8.7"/></g><circle cx="20" cy="20" r="8" fill="#d97706"/></svg>`;
+  if (type === 'thunder') {
+    return `<svg class="weather-icon" viewBox="0 0 40 40"><path class="anim-cloud" fill="#607d8b" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/><polygon class="anim-bolt" fill="#f59e0b" points="19,20 14,28 18,28 16,36 24,25 20,25"/></svg>`;
+  } else if (type === 'rain') {
+    return `<svg class="weather-icon" viewBox="0 0 40 40"><path class="anim-cloud" fill="#78909c" d="M10,20 Q10,14 16,14 Q18,9 24,11 Q29,10 30,15 Q34,16 33,20 Z"/><line class="anim-drop-1" x1="16" y1="23" x2="14" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/><line class="anim-drop-2" x1="24" y1="23" x2="22" y2="28" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/></svg>`;
+  } else if (type === 'cloudy') {
+    return `<svg class="weather-icon" viewBox="0 0 40 40"><path class="anim-cloud" fill="#90a4ae" d="M9,22 Q9,15 16,15 Q18,10 25,12 Q30,11 31,17 Q35,18 34,22 Z"/></svg>`;
+  } else {
+    return `<svg class="weather-icon" viewBox="0 0 40 40"><g class="anim-sun-rays" stroke="#d97706" stroke-width="2"><line x1="20" y1="4" x2="20" y2="8"/><line x1="20" y1="32" x2="20" y2="36"/><line x1="4" y1="20" x2="8" y2="20"/><line x1="32" y1="20" x2="36" y2="20"/><line x1="8.7" y1="8.7" x2="11.5" y2="11.5"/><line x1="28.5" y1="28.5" x2="31.3" y2="31.3"/><line x1="8.7" y1="31.3" x2="11.5" y2="28.5"/><line x1="28.5" y1="11.5" x2="31.3" y2="8.7"/></g><circle cx="20" cy="20" r="8" fill="#d97706"/></svg>`;
+  }
 }
 
 async function fetchWeather(lat, lon) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&timezone=Europe%2FKyiv&forecast_days=5&windspeed_unit=ms&hourly=temperature_2m,dew_point_2m,cloud_cover,wind_speed_10m,wind_gusts_10m,precipitation,rain,snowfall,weather_code,visibility&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,wind_direction_10m_dominant,weather_code`;
-  let res = await fetch(url);
+  const res = await fetch(url);
   if (!res.ok) throw new Error("API error");
   return await res.json();
 }
 
-/* ==================== РЕНДЕР ==================== */
 function renderCards(data) {
   return data.daily.time.map((dateStr, i) => {
     const idxs = [];
@@ -480,16 +512,18 @@ function renderCards(data) {
 
     const temps = idxs.map(k => data.hourly.temperature_2m[k]).filter(v => v !== undefined && v !== null);
     const dews = idxs.map(k => data.hourly.dew_point_2m[k]).filter(v => v !== undefined && v !== null);
+    const clouds = idxs.map(k => data.hourly.cloud_cover[k]);
     const winds = idxs.map(k => data.hourly.wind_speed_10m[k]);
     const gusts = idxs.map(k => data.hourly.wind_gusts_10m[k]);
     const precips = idxs.map(k => data.hourly.precipitation[k]);
-    const rains = idxs.map(k => data.hourly.rain?.[k] || 0);
-    const snows = idxs.map(k => data.hourly.snowfall?.[k] || 0);
-    const avgCloud = idxs.map(k => data.hourly.cloud_cover[k]).reduce((a,b)=>a+b,0) / idxs.length;
+    const rains = idxs.map(k => data.hourly.rain ? data.hourly.rain[k] : 0);
+    const snows = idxs.map(k => data.hourly.snowfall ? data.hourly.snowfall[k] : 0);
 
-    const goodHours = [], badHours = [], fogHours = [];
-    let minVisibility = 10000;
+    const goodHours = [];
+    const badHours = [];
     const badReasons = new Set();
+    const fogHours = [];
+    let minVisibility = 10000;
 
     idxs.forEach(k => {
       const gust = data.hourly.wind_gusts_10m[k] || 0;
@@ -502,14 +536,16 @@ function renderCards(data) {
       const isThunder = (code >= 95);
       const isHeavyPrecip = (precip > 0.8);
       const isHighWind = (gust >= 11);
-      const isSnow = (code >= 71 && code <= 86);
+      const isSnowCode = (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86);
 
-      if (isFog) fogHours.push(data.hourly.time[k].split('T')[1].substring(0, 5));
+      if (isFog) {
+        fogHours.push(data.hourly.time[k].split('T')[1].substring(0, 5));
+      }
 
       if (isHighWind || isHeavyPrecip || isThunder || (isFog && vis < 500)) {
         badHours.push(k);
         if (isHighWind) badReasons.add("пориви вітру");
-        if (isHeavyPrecip) badReasons.add(isSnow ? "сніг" : "дощ");
+        if (isHeavyPrecip) badReasons.add(isSnowCode ? "сніг" : "дощ");
         if (isThunder) badReasons.add("гроза");
         if (isFog) badReasons.add("туман");
       } else if (gust <= 8 && precip <= 0.1 && vis >= 2000) {
@@ -517,47 +553,58 @@ function renderCards(data) {
       }
     });
 
-    let fogText = "Не очікується", hasFog = fogHours.length > 0;
+    let fogText = "Не очікується";
+    let hasFog = fogHours.length > 0;
     if (hasFog) {
-      let tr = fogHours.length === 1 ? fogHours[0] : `${fogHours[0]}–${fogHours[fogHours.length - 1]}`;
-      fogText = `Є (${tr}, до ${minVisibility < 1000 ? Math.round(minVisibility)+' м' : (minVisibility/1000).toFixed(1)+' км'})`;
+      const startH = fogHours[0];
+      const endH = fogHours[fogHours.length - 1];
+      const timeRange = (fogHours.length === 1) ? startH : `${startH}–${endH}`;
+      const visStr = minVisibility < 1000 ? `${Math.round(minVisibility)} м` : `${(minVisibility / 1000).toFixed(1)} км`;
+      fogText = `Є (${timeRange}, до ${visStr})`;
     }
-
-    const goodTimeRanges = groupContinuousHours(goodHours, data.hourly.time);
-    const badTimeRanges = groupContinuousHours(badHours, data.hourly.time);
 
     const maxT = temps.length ? Math.round(Math.max(...temps)) : 0;
     const minT = temps.length ? Math.round(Math.min(...temps)) : 0;
     const maxGust = gusts.length ? Math.round(Math.max(...gusts)) : 0;
     const maxWind = winds.length ? Math.round(Math.max(...winds)) : 0;
     const minWind = winds.length ? Math.round(Math.min(...winds)) : 0;
-    const tPrecip = precips.reduce((a,b)=>a+(b||0),0);
-    const tRain = rains.reduce((a,b)=>a+(b||0),0);
-    const tSnowMm = snows.reduce((a,b)=>a+(b||0),0) * 10;
-
+    const totalPrecip = precips.reduce((a,b)=>a+(b||0),0);
+    const totalRain = rains.reduce((a,b)=>a+(b||0),0);
+    const totalSnowMm = snows.reduce((a,b)=>a+(b||0),0) * 10;
+    
     let precipText = "Немає";
-    if (tRain > 0 && tSnowMm > 0) precipText = `Дощ: ${tRain.toFixed(1)} мм | Сніг: ${tSnowMm.toFixed(1)} мм`;
-    else if (tRain > 0) precipText = `Дощ: ${tRain.toFixed(1)} мм`;
-    else if (tSnowMm > 0) precipText = `Сніг: ${tSnowMm.toFixed(1)} мм`;
-    else if (tPrecip > 0) precipText = `${tPrecip.toFixed(1)} мм`;
+    if (totalRain > 0 && totalSnowMm > 0) precipText = `Дощ: ${totalRain.toFixed(1)} мм | Сніг: ${totalSnowMm.toFixed(1)} мм`;
+    else if (totalRain > 0) precipText = `Дощ: ${totalRain.toFixed(1)} мм`;
+    else if (totalSnowMm > 0) precipText = `Сніг: ${totalSnowMm.toFixed(1)} мм`;
+    else if (totalPrecip > 0) precipText = `${totalPrecip.toFixed(1)} мм`;
 
     let cloudBase = 800;
     if (temps.length > 0 && dews.length > 0) {
-      const spread = Math.max(0, (temps.reduce((a,b)=>a+b,0)/temps.length) - (dews.reduce((a,b)=>a+b,0)/dews.length));
-      cloudBase = Math.max(150, Math.round((125 * spread) / 50) * 50);
+      const avgT = temps.reduce((a,b)=>a+b,0)/temps.length;
+      const avgD = dews.reduce((a,b)=>a+b,0)/dews.length;
+      cloudBase = Math.round((125 * Math.max(0, avgT - avgD)) / 50) * 50;
     }
+    if (isNaN(cloudBase) || cloudBase < 50) cloudBase = 150;
 
     const d = new Date(dateStr + 'T00:00:00');
-    const code = data.daily.weather_code?.[i] || 0;
-    
-    let wType = 'clear', wLbl = 'ЯСНО', bCls = 'badge-clear';
-    if (code >= 95) { wType = 'thunder'; wLbl = 'ГРОЗА'; bCls = 'badge-thunder'; }
-    else if (code >= 51 || tPrecip > 0.5) { wType = 'rain'; wLbl = (code >= 71 && code <= 86) ? 'СНІГ' : 'ДОЩ'; bCls = 'badge-rain'; }
-    else if (code >= 1 || avgCloud > 40) { wType = 'cloudy'; wLbl = 'ХМАРНО'; bCls = 'badge-cloudy'; }
+    const code = data.daily.weather_code ? data.daily.weather_code[i] : 0;
+    let weatherType = 'clear', weatherLabel = 'ЯСНО', badgeClass = 'badge-clear';
 
-    let uTag = 'СПРИЯТЛИВІ', tagCls = 'status-ok';
-    if (badHours.length > 12 || maxGust >= 14 || tPrecip > 5 || wType === 'thunder') { uTag = 'НЕСПРИЯТЛИВІ'; tagCls = 'status-danger'; }
-    else if (badHours.length > 0 || maxGust >= 9 || tPrecip > 0.8 || hasFog) { uTag = 'ОБМЕЖЕНІ'; tagCls = 'status-warn'; }
+    if (code >= 95) { weatherType = 'thunder'; weatherLabel = 'ГРОЗА'; badgeClass = 'badge-thunder'; }
+    else if (code >= 51 || totalPrecip > 0.5) {
+      weatherType = 'rain';
+      weatherLabel = (code === 71 || code === 73 || code === 75 || code === 77 || code === 85 || code === 86) ? 'СНІГ' : 'ДОЩ';
+      badgeClass = 'badge-rain';
+    } else if (code >= 1 || (clouds.length && clouds.reduce((a,b)=>a+b,0)/clouds.length > 40)) {
+      weatherType = 'cloudy'; weatherLabel = 'ХМАРНО'; badgeClass = 'badge-cloudy';
+    }
+
+    let uavTag = 'СПРИЯТЛИВІ', tagClass = 'status-ok';
+    if (badHours.length > 12 || maxGust >= 14 || totalPrecip > 5 || weatherType === 'thunder') {
+      uavTag = 'НЕСПРИЯТЛИВІ'; tagClass = 'status-danger';
+    } else if (badHours.length > 0 || maxGust >= 9 || totalPrecip > 0.8 || hasFog) {
+      uavTag = 'ОБМЕЖЕНІ'; tagClass = 'status-warn';
+    }
 
     return `
       <div class="card">
@@ -565,43 +612,41 @@ function renderCards(data) {
           <div class="card-top">
             <div class="day-group">
               <span class="wday">${WEEKDAYS[d.getDay()]}</span>
-              <span class="date-str">${d.getDate()} ${MONTHS[d.getMonth()]}</span>
+              <span class="date-str">${d.getDate()} ${MONTHS[d.getMonth()] || 'серп'}</span>
             </div>
-            <span class="badge ${bCls}">${wLbl}</span>
+            <span class="badge ${badgeClass}">${weatherLabel}</span>
           </div>
-
           <div class="card-main-info">
             <div class="temp-box">
-              <span class="t-max">${maxT}°</span>
-              <span class="t-min">${minT}°</span>
+              <span class="t-max">${maxT}°</span><span class="t-min">${minT}°</span>
             </div>
-            ${getWeatherIcon(wType)}
+            ${getWeatherIcon(weatherType)}
           </div>
-
           <div class="metrics-list">
             <div class="m-row"><span class="lbl">Опади</span><span class="val">${precipText}</span></div>
             <div class="m-row"><span class="lbl">Вітер (пориви)</span><span class="val">${degToArrow(data.daily.wind_direction_10m_dominant[i])} ${minWind}-${maxWind} м/с (${maxGust})</span></div>
-            <div class="m-row"><span class="lbl">Туман</span><span class="val" style="${hasFog?'color:var(--warn);font-weight:700;':''}">${fogText}</span></div>
-            <div class="m-row"><span class="lbl">Схід/Захід</span><span class="val">${data.daily.sunrise[i].split('T')[1]} / ${data.daily.sunset[i].split('T')[1]}</span></div>
+            <div class="m-row"><span class="lbl">Туман</span><span class="val" style="${hasFog ? 'color:var(--warn); font-weight:700;' : ''}">${fogText}</span></div>
+            <div class="m-row"><span class="lbl">Схід / Захід</span><span class="val">${data.daily.sunrise[i].split('T')[1]} / ${data.daily.sunset[i].split('T')[1]}</span></div>
             <div class="m-row"><span class="lbl">НМХ</span><span class="val">≈ ${cloudBase} м</span></div>
           </div>
         </div>
-
         <div class="card-right">
           <div class="tactical-box">
             <div class="tac-head">
               <span class="tac-title">ВПЛИВ НА БПЛА</span>
-              <span class="status-badge ${tagCls}">${uTag}</span>
+              <span class="status-badge ${tagClass}">${uavTag}</span>
             </div>
             <ul class="tac-list">
-              <li><b>Вікна:</b> <span class="time-tag-good">${goodTimeRanges}</span></li>
-              ${badHours.length > 0 ? `<li><b>Критика:</b> <span class="time-tag-bad">${badTimeRanges}</span> (${Array.from(badReasons).join(', ')})</li>` : ''}
-              <li>Пориви до <b>${maxGust} м/с</b>.</li>
+              <li><b>Сприятливі вікна:</b> <span class="time-tag-good">${groupContinuousHours(goodHours, data.hourly.time)}</span></li>
+              ${badHours.length > 0 ? `<li><b>Критичні години:</b> <span class="time-tag-bad">${groupContinuousHours(badHours, data.hourly.time)}</span> (${Array.from(badReasons).join(', ')})</li>` : ''}
+              <li>Пориви вітру до <b>${maxGust} м/с</b>.</li>
             </ul>
           </div>
           <div class="tactical-box">
             <div class="tac-head"><span class="tac-title">БАЛІСТИКА</span></div>
-            <ul class="tac-list"><li>Вітер: ≤${maxWind} м/с | Відхил. T: ${maxT - 15 > 0 ? '+' : ''}${maxT - 15}°C</li></ul>
+            <ul class="tac-list">
+              <li>Вітер: ≤${maxWind} м/с | Відхил. T: ${maxT - 15 > 0 ? '+' : ''}${maxT - 15}°C</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -609,114 +654,168 @@ function renderCards(data) {
   }).join('');
 }
 
-/* ==================== УПРАВЛІННЯ НП ==================== */
-function getLoc(id) { return locations.find(l => l.id === id); }
+/* ==================== СИСТЕМА РЕНДЕРУ ТА КЕРУВАННЯ НП ==================== */
 
-function createLocationBlock(loc, index) {
-  const div = document.createElement('div');
-  div.className = 'np-column';
-  div.id = `block-${loc.id}`;
-  div.innerHTML = `
-    <div class="np-header">
-      <div class="np-header-top">
-        <h2 class="np-title" id="title-${loc.id}">${index + 1}. ${loc.name}</h2>
-        <button class="btn btn-danger" onclick="removeLocation('${loc.id}')">❌ Видалити</button>
+// Головна функція, що малює сітку стовпчиків
+function renderColumns() {
+  const grid = document.getElementById('main-grid');
+  // Динамічно задаємо кількість стовпчиків
+  grid.style.gridTemplateColumns = `repeat(${locations.length}, 1fr)`;
+  
+  grid.innerHTML = locations.map((loc, idx) => `
+    <div class="np-column">
+      <div class="np-header">
+        <div class="search-row">
+          <input type="text" id="input-${idx}" placeholder="Назва, Lat/Lon або MGRS..." onkeydown="if(event.key==='Enter') updateNP(${idx})">
+          <button class="btn btn-main" onclick="updateNP(${idx})">Ок</button>
+          <button class="btn" onclick="getGPS(${idx})">📍 GPS</button>
+          <button class="btn btn-del" onclick="removeNP(${idx})" title="Видалити картку">❌</button>
+        </div>
+        <h2 class="np-title" id="title-${idx}">${idx + 1}. ${loc.name || 'Очікування...'}</h2>
+        <div class="np-meta">
+          <span id="meta-${idx}">${loc.region || ''}</span> · 
+          <span class="np-coords" id="coords-${idx}">${loc.lat ? loc.lat.toFixed(4) + '°пн ' + loc.lon.toFixed(4) + '°сх' : '—'}</span> · 
+          <span class="mgrs-tag" id="mgrs-${idx}">${loc.lat ? latLonToMGRS(loc.lat, loc.lon) : '—'}</span>
+        </div>
       </div>
-      <div class="np-meta">
-        <span id="meta-${loc.id}">-</span> · 
-        <span class="np-coords" id="coords-${loc.id}">-</span> · 
-        <span class="mgrs-tag" id="mgrs-${loc.id}">-</span>
-      </div>
-      <div class="search-row">
-        <input type="text" id="input-${loc.id}" placeholder="Назва, Lat/Lon або MGRS..." onkeydown="if(event.key==='Enter') updateNP('${loc.id}')">
-        <button class="btn btn-main" onclick="updateNP('${loc.id}')">Ок</button>
-        <button class="btn" onclick="getGPS('${loc.id}')">📍 GPS</button>
+      <div class="days-list" id="grid-${idx}">
+        ${loc.cachedHTML || '<div class="loading-msg">Завантаження...</div>'}
       </div>
     </div>
-    <div class="days-list" id="grid-${loc.id}">
-      <div class="loading-msg">Завантаження...</div>
-    </div>
-  `;
-  return div;
-}
+  `).join('');
 
-function renderAllBlocks() {
-  const container = document.getElementById('locations-container');
-  container.innerHTML = '';
+  // Запускаємо завантаження погоди для тих карток, які не мають кешу
   locations.forEach((loc, idx) => {
-    container.appendChild(createLocationBlock(loc, idx));
-    loadNP(loc.id);
+    if (!loc.cachedHTML && loc.lat && loc.lon) {
+      loadNP(idx);
+    }
   });
 }
 
-function addLocation() {
-  const newId = 'loc_' + Date.now();
-  // Координати Запоріжжя як стартові, щоб картка не була порожньою
-  locations.unshift({ id: newId, name: "Запоріжжя", lat: 47.8388, lon: 35.1396 });
-  renderAllBlocks(); // Перемальовуємо, щоб оновити порядкові номери
+function addNP() {
+  locations.push({
+    name: "Новий НП",
+    lat: 48.4647,
+    lon: 35.0461,
+    region: "Дніпропетровська обл.",
+    cachedHTML: null
+  });
+  renderColumns();
 }
 
-function removeLocation(id) {
-  locations = locations.filter(l => l.id !== id);
-  renderAllBlocks(); // Перемальовуємо, щоб оновити порядкові номери
+function removeNP(idx) {
+  if (locations.length <= 1) {
+    alert("Неможливо видалити останній населений пункт!");
+    return;
+  }
+  locations.splice(idx, 1);
+  renderColumns();
 }
 
-async function loadNP(id) {
-  const loc = getLoc(id);
-  if (!loc) return;
-  const gridEl = document.getElementById(`grid-${id}`);
+function updateHeaderInfo(idx) {
+  const loc = locations[idx];
+  const coordsEl = document.getElementById(`coords-${idx}`);
+  const mgrsEl = document.getElementById(`mgrs-${idx}`);
+  if (coordsEl) coordsEl.textContent = `${loc.lat.toFixed(4)}°пн ${loc.lon.toFixed(4)}°сх`;
+  if (mgrsEl) mgrsEl.textContent = latLonToMGRS(loc.lat, loc.lon);
+}
+
+async function loadNP(idx) {
+  const loc = locations[idx];
+  const gridEl = document.getElementById(`grid-${idx}`);
+  if (!gridEl) return;
   
-  document.getElementById(`coords-${id}`).textContent = `${loc.lat.toFixed(4)}°пн ${loc.lon.toFixed(4)}°сх`;
-  document.getElementById(`mgrs-${id}`).textContent = latLonToMGRS(loc.lat, loc.lon);
+  updateHeaderInfo(idx);
   
   reverseGeocode(loc.lat, loc.lon).then(geo => {
     if (geo && geo.name) {
-      document.getElementById(`title-${id}`).textContent = `${locations.indexOf(loc) + 1}. ${geo.name}`;
-      document.getElementById(`meta-${id}`).textContent = geo.region || '';
+      loc.name = geo.name;
+      loc.region = geo.region;
+      const titleEl = document.getElementById(`title-${idx}`);
+      const metaEl = document.getElementById(`meta-${idx}`);
+      if (titleEl) titleEl.textContent = `${idx + 1}. ${geo.name}`;
+      if (metaEl) metaEl.textContent = geo.region ? `${geo.region}` : '';
     }
   });
 
   try {
-    gridEl.innerHTML = renderCards(await fetchWeather(loc.lat, loc.lon));
+    gridEl.innerHTML = '<div class="loading-msg">Завантаження...</div>';
+    const raw = await fetchWeather(loc.lat, loc.lon);
+    const html = renderCards(raw);
+    loc.cachedHTML = html; // Кешуємо, щоб при додаванні нових карток не було блимання
+    gridEl.innerHTML = html;
   } catch (e) {
-    gridEl.innerHTML = `<div class="loading-msg" style="color:var(--danger);">Помилка завантаження API.</div>`;
+    gridEl.innerHTML = `<div class="loading-msg" style="color:var(--danger);">Помилка завантаження.</div>`;
   }
 }
 
-async function updateNP(id) {
-  const loc = getLoc(id);
-  if (!loc) return;
-  const val = document.getElementById(`input-${id}`).value.trim();
+async function updateNP(idx) {
+  const val = document.getElementById(`input-${idx}`).value.trim();
   if (!val) return;
 
+  let newLat = null, newLon = null;
   const mgrsLoc = mgrsToLatLon(val);
-  if (mgrsLoc) { loc.lat = mgrsLoc.lat; loc.lon = mgrsLoc.lon; }
-  else {
+  
+  if (mgrsLoc) {
+    newLat = mgrsLoc.lat; newLon = mgrsLoc.lon;
+  } else {
     const parts = val.split(/[\s,]+/);
-    if (parts.length >= 2 && !isNaN(parseFloat(parts[0])) && !isNaN(parseFloat(parts[1]))) {
-      loc.lat = parseFloat(parts[0]); loc.lon = parseFloat(parts[1]);
-    } else {
-      const geo = await forwardGeocode(val);
-      if (geo) { loc.lat = geo.lat; loc.lon = geo.lon; loc.name = geo.name; }
-      else { alert("Населений пункт не знайдено."); return; }
+    if (parts.length >= 2) {
+      const parsedLat = parseFloat(parts[0]);
+      const parsedLon = parseFloat(parts[1]);
+      if (!isNaN(parsedLat) && !isNaN(parsedLon)) {
+        newLat = parsedLat; newLon = parsedLon;
+      }
     }
   }
-  loadNP(id);
-}
 
-function getGPS(id) {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const loc = getLoc(id);
-      if(loc) { loc.lat = pos.coords.latitude; loc.lon = pos.coords.longitude; loadNP(id); }
-    });
+  if (newLat !== null && newLon !== null) {
+    locations[idx].lat = newLat;
+    locations[idx].lon = newLon;
+    locations[idx].cachedHTML = null;
+    loadNP(idx);
+    return;
+  }
+
+  const geo = await forwardGeocode(val);
+  if (geo) {
+    locations[idx].lat = geo.lat;
+    locations[idx].lon = geo.lon;
+    locations[idx].name = geo.name;
+    locations[idx].cachedHTML = null;
+    
+    const titleEl = document.getElementById(`title-${idx}`);
+    const metaEl = document.getElementById(`meta-${idx}`);
+    if (titleEl) titleEl.textContent = `${idx + 1}. ${geo.name}`;
+    if (metaEl) metaEl.textContent = geo.region ? `${geo.region}` : '';
+    
+    loadNP(idx);
+  } else {
+    alert("Населений пункт або координати не знайдено.");
   }
 }
 
-function loadAllNP() { locations.forEach(l => loadNP(l.id)); }
+function getGPS(idx) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async pos => {
+      locations[idx].lat = pos.coords.latitude;
+      locations[idx].lon = pos.coords.longitude;
+      locations[idx].cachedHTML = null;
+      loadNP(idx);
+    });
+  } else {
+    alert("Ваш браузер не підтримує геолокацію.");
+  }
+}
 
-// Ініціалізація
-renderAllBlocks();
+function loadAllNP() {
+  locations.forEach(loc => loc.cachedHTML = null);
+  renderColumns();
+}
+
+// Початковий рендер програми
+renderColumns();
+
 </script>
 
 </body>
