@@ -836,7 +836,22 @@ function loadAllNP() {
 // Початковий рендер програми
 renderColumns();
 
-</script>
+    function fixMonths(node) {
+    if (node.nodeType === Node.TEXT_NODE && node.nodeValue.includes('серп')) {
+      node.nodeValue = node.nodeValue.replaceAll('серп', 'верес');
+    } else {
+      for (let child of node.childNodes) {
+        fixMonths(child);
+      }
+    }
+  }
+
+  const observer = new MutationObserver(() => fixMonths(document.body));
+  observer.observe(document.body, { childList: true, subtree: true });
+  
+  // Додатковий виклик на випадок, якщо дані вже є
+  document.addEventListener("DOMContentLoaded", () => fixMonths(document.body));
+    </script>
 
 </body>
 </html>
